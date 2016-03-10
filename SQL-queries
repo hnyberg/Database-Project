@@ -1,0 +1,39 @@
+CREATE DATABASE Netflix;
+USE Netflix;
+
+CREATE TABLE titles
+(id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(32), 
+type VARCHAR(32), 
+minutes INT, 
+year INT,
+grade FLOAT,
+original varchar(3));
+
+CREATE TABLE actors
+(id INT PRIMARY KEY AUTO_INCREMENT,
+firstName VARCHAR(32),
+lastName VARCHAR(32),
+sex varchar(7),
+year int(4));
+
+CREATE TABLE genre
+(id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(32));
+
+CREATE TABLE roles
+(id INT PRIMARY KEY AUTO_INCREMENT,
+firstName VARCHAR(32),
+lastName VARCHAR(32),
+titleID int(4),
+actorID int(4));
+
+CREATE TABLE genreConnections
+(id INT PRIMARY KEY AUTO_INCREMENT,
+titleID int(4),
+genreID int(4));
+
+INSERT INTO titles (name, type, minutes, year, grade, original) VALUES
+("House Of Cards","Series",50,2013,5,Yes),
+;
+
