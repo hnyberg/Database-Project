@@ -6,7 +6,7 @@ Hannes Nyberg
 Niclas Rudman  
 Renzo Hidalgo  
 
-Project Description:
+Project Description:  
 -Design a database in SQL.  
 -Make a Java-GUI to interact with database.  
 -JDBC for communication with app and database.  
