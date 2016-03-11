@@ -5,8 +5,8 @@ CREATE TABLE titles
 (id INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(32), 
 type VARCHAR(32), 
-year INT,
-minutes INT,
+year INT(4),
+minutes  INT(3),
 grade FLOAT,
 original BOOL);
 
@@ -17,21 +17,79 @@ lastName VARCHAR(32),
 sex varchar(7),
 year int(4));
 
+CREATE TABLE writers
+(id INT PRIMARY KEY AUTO_INCREMENT,
+firstName VARCHAR(32),
+lastName VARCHAR(32),
+year INT(4));
+
+CREATE TABLE directors
+(id INT PRIMARY KEY AUTO_INCREMENT,
+firstName VARCHAR(32),
+lastName VARCHAR(32),
+year INT(4));
+
 CREATE TABLE genre
 (id INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(32));
 
-CREATE TABLE roles
-(id INT PRIMARY KEY AUTO_INCREMENT,
-firstName VARCHAR(32),
-lastName VARCHAR(32),
-titleID int(4),
-actorID int(4));
 
 CREATE TABLE genreConnections
 (id INT PRIMARY KEY AUTO_INCREMENT,
-titleID int(4),
-genreID int(4));
+titleID INT(4),
+genreID INT(4));
+
+CREATE TABLE actorRoles
+(id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(32),
+titleID INT(4),
+actorID INT(4));
+
+CREATE TABLE writerRoles
+(id INT PRIMARY KEY AUTO_INCREMENT,
+titleID INT(4),
+writerID INT(4));
+
+CREATE TABLE directorRoles
+(id INT PRIMARY KEY AUTO_INCREMENT,
+titleID INT(4),
+directorID INT(4));
+
+
+
+ALTER TABLE actorRoles ADD 
+CONSTRAINT FK_titleID 
+FOREIGN KEY (titleID) REFERENCES titles(id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+ALTER TABLE actorRoles ADD 
+CONSTRAINT FK_actorID
+FOREIGN KEY (actorID) REFERENCES actors(id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+ALTER TABLE writerRoles ADD 
+CONSTRAINT FK_titleID 
+FOREIGN KEY (titleID) REFERENCES titles(id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT FK_writerID
+FOREIGN KEY (writerID) REFERENCES writers(id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+ALTER TABLE directorRoles ADD 
+CONSTRAINT FK_titleID 
+FOREIGN KEY (titleID) REFERENCES titles(id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT FK_directorID
+FOREIGN KEY (directorID) REFERENCES directors(id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+
 
 INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("House Of Cards","Series",2013,50,5,1),
@@ -71,7 +129,7 @@ INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("What Just Happened","Movie",2007,99,1,0),
 ("How I Met Your Mother","Series",2005,22,4,0),
 ("Catch Me If You Can","Movie",2002,141,5,0),
-("The Talented Mister Ripley","Movie",1999,138,5,0),
+("The Talented Mr. Ripley","Movie",1999,138,5,0),
 ("Forest Gump","Movie",1994,152,5,0),
 ("Shameless","Series",2013,56,4.5,0),
 ("Breaking Bad","Series",2013,47,3,0),
@@ -82,6 +140,24 @@ INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("The Pledge","Movie",2001,124,2,0),
 ("Jessica Jones","Series",2015,52,4,1)
 ;
+
+INSERT INTO genre (name) VALUES
+("Drama"),
+("Comedy"),
+("Military & War"),
+("Satire"),
+("Romantic"),
+("Sports"),
+("Thriller"),
+("Psychilogical"),
+("Sci-Fi & Fantasy"),
+("Crime"),
+("Action"),
+("Superhero"),
+("Independent"),
+("Martial Arts"),
+("Mystery"),
+("Non-Fiction");
 
 INSERT INTO actors (firstName, lastName, sex, year) VALUES
 ("Kevin","Spacey","male",1959),
@@ -107,7 +183,7 @@ INSERT INTO actors (firstName, lastName, sex, year) VALUES
 ("Jake","Gyllenhaal","male",1980),
 ("Heath","Ledger","male",1979),
 ("Matthew","Mcconaughey","male",1969),
-("Anne","Hathaway","male",1982),
+("Anne","Hathaway","female",1982),
 ("Michelle","Williams","female",1980),
 ("Katie","Holmes","female",1978),
 ("Jim","Carrey","male",1962),
@@ -129,16 +205,102 @@ INSERT INTO actors (firstName, lastName, sex, year) VALUES
 ("Michelle","Yeoh","female",1962),
 ("Donnie","Yen","male",1963),
 ("Harry","Shum jr","male",1982),
-("Marion","Cotillard","male",1975),
+("Marion","Cotillard","female",1975),
 ("William","H. Macy","male",1950),
 ("Bryan","Cranston","male",1956),
 ("Michael","C. Hall","male",1971),
 ("Jennifer","Carpenter","female",1979),
 ("David","Zayas","male",1962),
-("Zooey","Descanel","female",1980),
+("Zooey","Deschanel","female",1980),
 ("Benedict","Cumberbatch","male",1976),
 ("Martin","Freeman","male",1971),
 ("Helen","Mirren","female",1945),
 ("David","Tennant","male",1971),
 ("Krysten","Ritter","female",1981),
-("Rachael","Taylor","female",1984);
+("Rachael","Taylor","female",1984)
+;
+
+INSERT INTO writers (firstName, lastName, year) VALUES
+("Andrew","Davies",1936),
+("Michael","Dobbs",1948),
+("Bill","Kennedy",NULL),
+("Beau","Willimon",1977),
+("Sean","Anders",1969),
+("John","Morris",NULL),
+("Peter","Straughan",1968),
+("Jon","Ronson",1967),
+("Jonathan","Tropper",1970),
+("Mitchell","Hurwitz",1963),
+("Jenji","Kohan",1969),
+("Sian","Heder",1977),
+("Robert","Carlock",1973),
+("Tina","Fey",1970),
+("Walter","Kirn",1962),
+("Jason","Reitman",1977),
+("Rawson","Marshall Thurber",1975),
+("Drake","Sather",1959),
+("Melissa","Rosenberg",1962),
+("John","Hamburg",1970),
+("Larry","Stuckey",NULL),
+("William","Monahan",1960),
+("Alan","Mak",1965),
+("James","V. Hart",1960),
+("Michael","Goldenberg",1965),
+("Jonathan","Nolan",1976),
+("Christopher","Nolan",1970),
+("David","Koepp",1963),
+("Paul","Schrader",1946),
+("Annie","Proulx",1935),
+("Larry","McMurtry",1936),
+("Scott","Silver",1964),
+("Paul","Tamasy",NULL),
+("Laeta","Kalogridis",1965),
+("Dennis","Lehane",1965),
+("Mark","Bomback",1971),
+("Mike","White",1970),
+("James","Vanderbilt",1975),
+("Robert","Graysmith",1942),
+("Charlie","Kaufman",1972),
+("Michael","Gondry",1963),
+("Bob","Kane",1915),
+("David","S. Goyer",1965),
+("Kevin","Williamson",1965),
+("Sofia","Coppola",1971),
+("Cristopher","Markus",NULL),
+("Stephen","McFeely",NULL),
+("John","Fusco",NULL),
+("Du","Lu Wang",1909),
+("George","Clayton Johnson",1929),
+("Jack","Golden Russell",NULL),
+("Harry","Brown",1917),
+("Charles","Lederer",1911),
+("Ted","Griffin",1970),
+("Woody","Allen",1935),
+("Matt","Damon",1970),
+("Ben","Affleck",1972),
+("William","Blinn",1938),
+("Stevie","Long",1972),
+("John","O''Brien",1960),
+("Art","Linson",1942),
+("Carter","Bays",1975),
+("Craig","Thomas",1942),
+("Frank","Abagnale Jr.",1948),
+("Patricia","Highsmith",1921),
+("Anthony","Minghella",1954),
+("Winston","Groom",1944),
+("Eric","Roth",1945),
+("Paul","Abbott",1960),
+("John","Wells",1956),
+("Jeff","Nathanson",1965),
+("Vince","Gilligan",1967),
+("David","Crane",1957),
+("Marta","Kauffman",1956),
+("James","Manos Jr.",NULL),
+("Robert","Cochran",1955),
+("Joel","Surnow",1954),
+("Mark","Gatiss",1966),
+("Steven","Moffat",1961),
+("Friedrich","Dürrenmatt",1921),
+("Jerzy","Kromolowski",1953),
+("Melissa","Rosenberg",1962)
+;
