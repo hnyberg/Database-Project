@@ -33,7 +33,6 @@ CREATE TABLE genre
 (id INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(32));
 
-
 CREATE TABLE genreConnections
 (id INT PRIMARY KEY AUTO_INCREMENT,
 titleID INT(4),
@@ -58,49 +57,49 @@ directorID INT(4));
 
 
 ALTER TABLE actorRoles ADD 
-CONSTRAINT FK_titleID 
+CONSTRAINT FK_actorRoles_title
 FOREIGN KEY (titleID) REFERENCES titles(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE actorRoles ADD 
-CONSTRAINT FK_actorID
+CONSTRAINT FK_actorRoles_actor
 FOREIGN KEY (actorID) REFERENCES actors(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE writerRoles ADD 
-CONSTRAINT FK_titleID 
+CONSTRAINT FK_writerRoles_title
 FOREIGN KEY (titleID) REFERENCES titles(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE writerRoles ADD 
-CONSTRAINT FK_writerID
+CONSTRAINT FK_writerRoles_writer
 FOREIGN KEY (writerID) REFERENCES writers(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE directorRoles ADD 
-CONSTRAINT FK_titleID 
+CONSTRAINT FK_directorRoles_title
 FOREIGN KEY (titleID) REFERENCES titles(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE directorRoles ADD 
-CONSTRAINT FK_directorID
+CONSTRAINT FK_directorRoles_director
 FOREIGN KEY (directorID) REFERENCES directors(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE genreConnections ADD 
-CONSTRAINT FK_titlesID
+CONSTRAINT FK_genreConnections_title
 FOREIGN KEY (titleID) REFERENCES titles(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
 
 ALTER TABLE genreConnections ADD 
-CONSTRAINT FK_genreID
+CONSTRAINT FK_genreConnections_genre
 FOREIGN KEY (genreID) REFERENCES genre(id) 
 ON UPDATE CASCADE
 ON DELETE CASCADE;
@@ -110,7 +109,7 @@ ON DELETE CASCADE;
 INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("House Of Cards","Series",2013,50,5,1),
 ("Horrible Bosses 2","Movie",2014,108,1.5,0),
-("The Men WHo Stare At Goats","Movie",2009,94,1,0),
+("The Men Who Stare At Goats","Movie",2009,94,1,0),
 ("This Is Where I Leave You","Movie",2014,103,3,0),
 ("Arrested Development","Series",2013,22,4,1),
 ("Orange Is The New Black","Series",2003,59,5,1),
@@ -137,7 +136,7 @@ INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("Dawsons Creek","Series",1999,60,2,0),
 ("Lost In Translation","Movie",2003,101,2,0),
 ("Captain America: The Winter Soldier","Movie",2014,136,4,0),
-("Crouching Tiger, Hidden Dragon: Sword Of Destiny","Movie",	2016,100,4,1),
+("Crouching Tiger, Hidden Dragon: Sword Of Destiny","Movie", 2016,100,4,1),
 ("Ocean's Eleven","Movie",2001,116,4,0),
 ("Midnight In Paris","Movie",2011,93,3,0),
 ("Good Will Hunting","Movie",1997,126,3,0),
@@ -146,7 +145,7 @@ INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("How I Met Your Mother","Series",2005,22,4,0),
 ("Catch Me If You Can","Movie",2002,141,5,0),
 ("The Talented Mr. Ripley","Movie",1999,138,5,0),
-("Forest Gump","Movie",1994,152,5,0),
+("Forrest Gump","Movie",1994,152,5,0),
 ("Shameless","Series",2013,56,4.5,0),
 ("Breaking Bad","Series",2013,47,3,0),
 ("Friends","Series",1994,22,5,0),
@@ -154,7 +153,27 @@ INSERT INTO titles (name, type, year, minutes, grade, original) VALUES
 ("24","Series",2001,44,4,0),
 ("Sherlock","Series",2010,88,5,0),
 ("The Pledge","Movie",2001,124,2,0),
-("Jessica Jones","Series",2015,52,4,1)
+("Jessica Jones","Series",2015,52,4,1),
+("Guardians Of The Galaxy","Movie",2014,121,4.5,0),
+("Snatch","Movie",2000,104,4,0),
+("Modern Family","Series",2009,22,4,0),
+("Saving Private Ryan","Movie",1998,169,5,0),
+("A Time To Kill","Movie",1996,149,4.5,0),
+("Black Hawk Down","Movie",2001,144,4,0),
+("Shooter","Movie",2007,124,3,0),
+("Extract","Movie",2009,92,3,0),
+("I Love You, Man","Movie",2009,105,3,0),
+("Limitless","Movie",2011,105,4,0),
+("The Place Beyond The Pines","Movie",2012,140,3.5,0),
+("The Notebook","Movie",2004,123,2.5,0),
+("Mean Girls","Movie",2004,107,5,0),
+("Anchorman","Movie",2004,104,3.5,0),
+("Dinner For Schmucks","Movie",2010,114,3,0),
+("View From The Top","Movie",2003,87,2.5,0),
+("Wet Hot American Summer","Movie",2001,97,4,0),
+("The Aviator","Movie",2004,170,3,0),
+("Mystic River","Movie",2003,138,4,0),
+("Aloha","Movie",2015,104,2,0)
 ;
 
 INSERT INTO genre (name) VALUES
@@ -233,7 +252,60 @@ INSERT INTO actors (firstName, lastName, sex, year) VALUES
 ("Helen","Mirren","female",1945),
 ("David","Tennant","male",1971),
 ("Krysten","Ritter","female",1981),
-("Rachael","Taylor","female",1984)
+("Rachael","Taylor","female",1984),
+("John","Carroll Lynch","male",1963),
+("Ewan","McGregor","male",1971),
+("Kate","Winslet","female",1975),
+("Sean","Penn","male",1960),
+("Kristen","Stewart","female",1990),
+("Martin","Sheen","male",1940),
+("Jude","Law","male",1972),
+("Brad","Pitt","male",1963),
+("Kate","Mulgrew","female",1955),
+("Taylor","Schilling","female",1984),
+("Jason","Biggs","male",1978),
+("Jane","Krakowski","female",1968),
+("Ellie","Kemper","female",1980),
+("Ben","Affleck","male",1972),
+("Robin","Williams","male",1951),
+("Emma","Rossum","female",2004),
+("Dean","Norris","male",1963),
+("Jonathan","Banks","male",1947),
+("Eddie","McClintock","male",1967),
+("Adam","Goldberg","male",1970),
+("Gary Oldman","male","male",1958),
+("Alec","Baldwin","male",1958),
+("Freddie","Prinze Jr.","male",1976),
+("Christine","Taylor","female",2004),
+("Dermot","Mulroney","male",1963),
+("Kiefer","Sutherland","male",1966),
+("Glenn","Moreshower","male",1959),
+("Tom","Sizemore","male",1961),
+("William","Fitchner","male",1956),
+("Benicio","Del Toro","male",1967),
+("John","C. Reilly","male",1965),
+("Rade","Serbedzija","male",1946),
+("Elias","Koteas","male",1961),
+("Tom","Guiry","male",1981),
+("Gabriel","Casseus","male",1972),
+("Bradley","Cooper","male",1975),
+("Rose","Byrne","female",1979),
+("Ryan","Gosling","male",1980),
+("Rachel","McAdams","female",1978),
+("Harris","Yulin","male",1937),
+("Tina","Fey","female",1970),
+("Mahershala","Ali","male",1974),
+("Gwyneth","Paltrow","female",1972),
+("Christina","Applegate","female",1971),
+("Rob","Lowe","male",1964),
+("Steve","Carell","male",1962),
+("Amy","Poehler","female",1971),
+("Janeane","Garofalo","female",1964),
+("J.K.","Simmons","male",1955),
+("Vin","Diesel","male",1967),
+("Emmy","Rossum","female",1986),
+("Bruce","Willis","male",1955),
+("Aisha","Tyler","female",1970)
 ;
 
 INSERT INTO writers (firstName, lastName, year) VALUES
@@ -318,10 +390,44 @@ INSERT INTO writers (firstName, lastName, year) VALUES
 ("Steven","Moffat",1961),
 ("Friedrich","Dürrenmatt",1921),
 ("Jerzy","Kromolowski",1953),
-("Melissa","Rosenberg",1962)
+("Melissa","Rosenberg",1962),
+("Derek","Cianfrance",1974),
+("Ben","Coccio",1975),
+("Jeremy","Leven",1941),
+("Jan","Sardi",NULL),
+("Rosalind","Wisemen",1969),
+("Adam","McKay",1968),
+("Will","Ferrell",1967),
+("David","Guion",NULL),
+("Michael","Handelman",NULL),
+("Eric","Wald",NULL),
+("David","Wain",1969),
+("Michael","Showalter",1970),
+("John","Logan",1961),
+("James","Gunn",1970),
+("Nicole","Perlman",NULL),
+("Guy","Ritchie",1968),
+("Gail","Mancuso",1958),
+("Michael","Alan Spiller",1961),
+("Robert","Rodat",1953),
+("John","Grisham",1955),
+("Akiva","Goldsman",1962),
+("Mark","Bowden",1951),
+("Ken","Nolan",NULL),
+("Jonathan","Lemkin",NULL),
+("Stephen","Hunter",1946),
+("Mike","Judge",1962),
+("John","Hamburg",1970),
+("Larry","Levin",NULL),
+("Leslie","Dixon",NULL),
+("Alan","Glynn",NULL),
+("Cameron","Crowe",1957),
+("Christopher","Lloyd",1960),
+("Steven","Levitan",1962),
+("Biran","Helgeland",1961)
 ;
 
-INSERT INTO Directors (firstName, lastName, year) VALUES
+INSERT INTO directors (firstName, lastName, year) VALUES
 ("John", "David Coles", 1990),
 ("Sean", "Anders", 1969),
 ("Grant", "Heslov", 1963),
@@ -364,6 +470,27 @@ INSERT INTO Directors (firstName, lastName, year) VALUES
 ("Coky", "Giedroyc", 1962),
 ("Sean", "Penn", 1960),
 ("Simon", "Cellan Jones", 1963),
+("Derek","Cianfrance",1974),
+("Nick","Cassavetes",1959),
+("Mark","Waters",1964),
+("Adam","McKay",1968),
+("Jay","Roach",1957),
+("Bruno","Barreto",1955),
+("David","Wain",1969),
+("James","Gunn",1970),
+("Guy","Ritchie",1968),
+("Steven","Levitan",1990),
+("Christopher","Lloyd",1960),
+("Joel","Schumacher",1939),
+("Ridley","Scott",1937),
+("Antoine","Fuqua",1966),
+("Mike","Judge",1962),
+("John","Hamburg",1970),
+("Neil","Burger",1963),
+("Cameron","Crowe",1957),
+("Brian","Helgeland",1961),
+("Dennis","Lehane",1965),
+("Clint","Eastwood",1930)
 ;
 
 INSERT INTO actorRoles (name, titleID, actorID) VALUES
@@ -372,6 +499,7 @@ INSERT INTO actorRoles (name, titleID, actorID) VALUES
 ("Claire Underwood",1,3),
 ("Zoe Barnes",1,10),
 ("Doug Stamper",1,11),
+("Remy Danton",1,100),
 ("Nick Hendricks",2,4),
 ("Dr. Julia Harris",2,17),
 ("Dave Harken",2,1),
@@ -379,15 +507,19 @@ INSERT INTO actorRoles (name, titleID, actorID) VALUES
 ("Larry Hooper",3,1),
 ("Judd Altman",4,4),
 ("Paul Altman",4,2),
+("Wendy Altman",4,99),
 ("Michael Bluth",5,4),
+("Tony Wonder",5,7),
 ("Tobias Fünke",5,36),
 ("Ryan Bingham",8,9),
 ("Craig Gregory",8,4),
 ("Peter La Fleur",9,5),
 ("White Goodman",9,7),
+("Kate Veatch",9,82),
 ("Derek Zoolander",10,7),
 ("Hansel",10,8),
 ("Mugato",10,6),
+("Matilda Jeffries",10,58),
 ("Greg Focker",11,7),
 ("Kevin Rawley",11,8),
 ("Jack Byrnes",11,12),
@@ -395,6 +527,7 @@ INSERT INTO actorRoles (name, titleID, actorID) VALUES
 ("Colin Sullivan",12,13),
 ("Frank Costello",12,16),
 ("Dignam",12,20),
+("Ellerby",12,89),
 ("Palmer Joss",13,23),
 ("Eleanor Arroway",13,40),
 ("Cooper",14,23),
@@ -468,18 +601,137 @@ INSERT INTO actorRoles (name, titleID, actorID) VALUES
 ("Frank Gallagher",40,47),
 ("Adriana",32,46),
 ("Walter White",41,48),
+("Hank Schrader",41,75),
 ("Rachel Green",42,17),
 ("Erica",42,37),
 ("Dexter Morgan",43,49),
 ("Debra Morgan",43,50),
 ("Angel Batista",43,51),
+("Jack Bauer",44,84),
+("Marianne Taylor",44,11),
+("Aaron Pierce",44,85),
+("Roger Stanton",44,98),
 ("Sherlock Holmes",45,53),
 ("Dr. John Watson",45,54),
 ("Doctor",46,55),
 ("Jerry Black",46,16),
 ("Kilgrave",47,56),
 ("Jessica Jones",47,57),
-("Trish Walker",47,58)
+("Trish Walker",47,58),
+("Groot",48,108),
+("Rocket",48,94),
+("Corpsman Dey",48,89),
+("The Collector",48,88),
+("Franky Four Fingers",49,88),
+("Mickey O''Neil",49,66),
+("Booris The Blade",49,90),
+("Detective Hatchner",2,76),
+("Mike Ehrmantraut",41,76),
+("Donnie Pritchett",50,76),
+("FBI Deputy Director Max Adams",43,76),
+("Brandon",50,77),
+("Cliff",42,77),
+("Larry Bloom",6,69),
+("Galina ''Red'' Reznikov",6,67),
+("Piper Chapman",6,68),
+("Kimmy Schmidt",7,70),
+("Jacqueline Voorhees",7,71),
+("Le Loup",7,75),
+("Marcia Clark",7,99),
+("Deputy Warden McPherson",21,59),
+("Arthur Leigh Allen",24,59),
+("Jonathan McQuarry",22,60),
+("Bob Wilton",3,60),
+("Duane Bailey",50,36),
+("Captain Miller",51,15),
+("Sergeant Horvath",51,86),
+("Private Mellish",51,78),
+("Private Caparzo",51,108),
+("Private Ryan",51,13),
+("Jake Tyler Brigance",52,23),
+("Carl Lee Hailey",52,34),
+("D.A. Rufus Buckley",52,1),
+("Freddie Lee Cobb",52,84),
+("Grimes",53,60),
+("McKnight",53,86),
+("Sanderson",53,87),
+("Matthews",53,85),
+("Gabriel Casseus",53,93),
+("Yurek",53,92),
+("Brendan Harris",66,92),
+("Jimmy Markum",66,62),
+("Katie Markum",66,109),
+("Fiona Gallagher",40,109),
+("Major General Holtz",3,85),
+("Bob Lee Swagger",54,20),
+("Sarah Fenn",54,10),
+("Jack Payne",54,91),
+("Michael Sandor",54,90),
+("Joel",55,4),
+("Dean",55,72),
+("Brian",55,107),
+("Peter Klaven",56,18),
+("Oswald Klaven",56,107),
+("Sydney Fife",56,19),
+("Eddie Morra",57,94),
+("Carl Van Loon",57,12),
+("Avery",58,94),
+("Jennifer",58,95),
+("Luke",58,96),
+("Kofi",58,100),
+("Al Cross",58,98),
+("Noah",59,96),
+("Allie",59,97),
+("Inez",32,97),
+("Brian Gilcrest",67,97),
+("Tracy Woodside",67,97),
+("Carson Welch",67,33),
+("General Dixon",67,80),
+("Regina George",60,97),
+("Ms. Norbury",60,99),
+("Mrs. George",60,105),
+("Ron Burgundy",61,6),
+("Veronica Corningstone",61,102),
+("Brian Fantana",61,18),
+("Brick Tamland",61,104),
+("Arturo Mendes",61,7),
+("Barry",62,104),
+("Tim",62,18),
+("Donna Jensen",63,101),
+("Christine Montgomery",63,102),
+("Ted Stewart",63,29),
+("Co-Pilot Steve Bench",63,103),
+("Beth",64,106),
+("Janis Gold",44,106),
+("Andy",64,18),
+("Susie",64,105),
+("Ben",64,94),
+("Howard Hughes",65,14),
+("Noah Dietrich",65,89),
+("Juan Trippe",65,80),
+("Errol Flynn",65,65),
+("Will Colbert",42,66),
+("Amy Green",42,102),
+("Dr. Michael Mitchell",42,9),
+("Eddie Menuek",42,78),
+("Tomas",42,73),
+("Richard Crosby",42,79),
+("Jim Gordon",18,79),
+("Jim Gordon",26,79),
+("Parker",42,80),
+("Sandy",42,81),
+("Cole Ortiz",44,81),
+("Bonnie",42,82),
+("Gavin Mitchell",42,83),
+("Sean Pierce",40,83),
+("Captain Marty Lee",24,83),
+("Mike Hannigan",42,18),
+("Actor",35,110),
+("Paul Stevens",42,110),
+("Eric",42,62),
+("Tommy",42,7),
+("Charlie Wheeler",42,111),
+("Wendy",50,111)
 ;
 
 INSERT INTO writerRoles (titleID, writerID) VALUES
@@ -572,5 +824,63 @@ INSERT INTO writerRoles (titleID, writerID) VALUES
 (45,78),
 (45,79),
 (46,80),
-(46,81)
+(46,81),
+(48,96),
+(48,97),
+(49,98),
+(50,114),
+(50,115),
+(51,101),
+(52,102),
+(52,103),
+(53,104),
+(53,105),
+(54,106),
+(54,107),
+(55,108),
+(56,109),
+(56,110),
+(57,111),
+(57,112),
+(58,83),
+(58,84),
+(59,85),
+(59,86),
+(60,14),
+(60,87),
+(61,88),
+(61,89),
+(62,90),
+(62,91),
+(63,92),
+(64,93),
+(64,94),
+(65,95),
+(67,113),
+(66,35),
+(66,116)
+;
+
+INSERT INTO directorRoles (titleID, directorID) VALUES
+(48,50),
+(49,51),
+(50,52),
+(50,53),
+(51,31),
+(52,54),
+(53,55),
+(54,56),
+(55,57),
+(56,58),
+(57,59),
+(58,43),
+(59,44),
+(60,45),
+(61,46),
+(62,47),
+(63,48),
+(64,49),
+(65,13),
+(66,63),
+(67,60)
 ;
