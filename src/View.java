@@ -197,7 +197,11 @@ public class View  extends JFrame{
 				{"Unbreakable Kimmy Schmidt","Series",2015,30,4.5,1}
 		}; 
 		
-		titleTable = new JTable(titles, listColumnNames);
+		ItemManager itemManager = new ItemManager();
+		
+		
+		
+		titleTable = new JTable(itemManager.getTable(), listColumnNames);
 		
 		JScrollPane scrollPane = new JScrollPane(titleTable);
 		scrollPane.setBackground(BACKGROUND_COLOR);

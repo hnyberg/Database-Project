@@ -38,19 +38,24 @@ public class ItemManager
 	public ItemManager()
 	{
 		updateTable("titles");
-		updateTable("actors");
-		updateTable("directors");
-		updateTable("writers");
-		updateTable("genre");
-		updateTable("genreconnections");
-		updateTable("actorroles");
-		updateTable("directorroles");
-		updateTable("writerroles");
+//		updateTable("actors");
+//		updateTable("directors");
+//		updateTable("writers");
+//		updateTable("genre");
+//		updateTable("genreconnections");
+//		updateTable("actorroles");
+//		updateTable("directorroles");
+//		updateTable("writerroles");
 	}
 	
 	public ItemComponent getItemTest()
 	{
 		return titles.getComponent(0);
+	}
+	
+	public Object[][] getTable()
+	{
+		return titles.getTable();
 	}
 	
 	public void updateTable(String table)
@@ -155,13 +160,14 @@ public class ItemManager
 		
 		String colum = "";
 		String values = "NULL";
-		for(int i = 0; i < colums[item.getItemType()].length; i++)
+		for(int i = 0; i < colums[item.getItemType() - 1].length; i++)
 		{
 			if(i != 0)
 				values += "?";
 				
 			colum += colums[item.getItemType() - 1][i];
-			if(i <= colums[item.getItemType()].length)
+			
+			if(i != colums[item.getItemType() - 1].length - 1)
 			{
 				colum += ", ";
 				values += ", ";
