@@ -247,6 +247,7 @@ public abstract class ItemComponent
 		switch (itemType)
 		{
 			case TITLE:
+<<<<<<< HEAD:src/ItemComponent.java
 				return new Object[] { name, titleType, releaseYear,
 					runTime, grade, original };
 			case ACTOR:
@@ -265,6 +266,26 @@ public abstract class ItemComponent
 				return new Object[] { connectionID1, connectionID2 };
 			case ACTOR_ROLE:
 				return new Object[] { name, connectionID1, connectionID2 };
+=======
+				return new Object[] { id, name, titleType, releaseYear,
+					runTime, grade, original };
+			case ACTOR:
+				return new Object[] { id, firstName, lastName, sex, birthYear };
+			case DIRECTOR:
+				return new Object[] { id, firstName, lastName, birthYear };
+			case WRITER:
+				return new Object[] { id, firstName, lastName, birthYear };
+			case GENRE:
+				return new Object[] { id, name };
+			case GENRE_CONNECTION:
+				return new Object[] { id, connectionID1, connectionID2 };
+			case DIRECTOR_ROLE:
+				return new Object[] {id, connectionID1, connectionID2 };
+			case WRITER_ROLE:
+				return new Object[] { id, connectionID1, connectionID2 };
+			case ACTOR_ROLE:
+				return new Object[] { id, name, connectionID1, connectionID2 };
+>>>>>>> refs/remotes/origin/master:src/ItemComponent.java
 			default:
 				return null;
 		}

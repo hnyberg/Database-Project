@@ -46,20 +46,34 @@ public class ItemGroup extends ItemComponent {
 	
 	public Object[][] getTable()
 	{
+<<<<<<< HEAD:src/ItemGroup.java
 		Object[][] data = new Object[itemComponents.size()][getComponent(1).getItem().length];
 		
 		Iterator itemIterator = itemComponents.iterator();
 		
 		int i = 0;
 		
+=======
+		Object[][] data = new Object[][]{};
+		
+		Iterator itemIterator = itemComponents.iterator();
+		
+>>>>>>> refs/remotes/origin/master:src/ItemGroup.java
 		while (itemIterator.hasNext()) {
 
 			ItemComponent itemInfo = (ItemComponent) itemIterator.next();
 			
+<<<<<<< HEAD:src/ItemGroup.java
 			data[i] = itemInfo.getItem();
 			
 			i++;
 		}
+=======
+			data = new Object[][] { itemInfo.getItem() };
+
+		}
+		
+>>>>>>> refs/remotes/origin/master:src/ItemGroup.java
 		return data;
 	}
 
