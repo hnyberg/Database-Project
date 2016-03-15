@@ -209,6 +209,24 @@ public class View  extends JFrame{
 		titleTable.setAutoCreateRowSorter(true);
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(titleTable.getModel());
 		titleTable.setRowSorter(sorter);
+		ItemManager itemManager = new ItemManager();
+		
+		ItemComponent itemChanged = new ItemGroup("test", 4);
+		
+		itemChanged.add(itemManager.getItemTest());
+		
+		System.out.println(itemChanged.displayInfo());
+		
+		//itemChanged.getComponent(0).setName("Detta test");
+		
+		try {
+			System.out.println(itemManager.insertItem(itemChanged.getComponent(0)));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		titleTable = new JTable(itemManager.getTable("titles"), listColumnNames);
 		
 		JScrollPane scrollPane = new JScrollPane(titleTable);
 		
