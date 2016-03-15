@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class View  extends JFrame{
 
@@ -44,6 +46,8 @@ public class View  extends JFrame{
 	private Font titleFont;
 	
 	private GridBagConstraints constraints;
+	
+	private ItemManager itemManager;
 	
 	private JLabel filterLabel;
 	private JLabel listLabel;
@@ -100,6 +104,9 @@ public class View  extends JFrame{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setFocusable(true);
+		
+		//	CREATE MANAGERS
+		itemManager = new ItemManager();
 		
 		//	CREATE FONTS
 		standardFont = new Font(Font.MONOSPACED, Font.BOLD, BIG_FONT_SIZE);
@@ -197,10 +204,13 @@ public class View  extends JFrame{
 				{"Unbreakable Kimmy Schmidt","Series",2015,30,4.5,1}
 		}; 
 		
-		titleTable = new JTable(titles, listColumnNames);
+		titleTable = new JTable(itemManager.getTable(), listColumnNames);
+		titleTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+		titleTable.setAutoCreateRowSorter(true);
+		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(titleTable.getModel());
+		titleTable.setRowSorter(sorter);
 		
 		JScrollPane scrollPane = new JScrollPane(titleTable);
-		scrollPane.setBackground(BACKGROUND_COLOR);
 		
 		listPanel.add(scrollPane);
 		
@@ -260,5 +270,3 @@ public class View  extends JFrame{
 		}
 	}
 }
-
-
