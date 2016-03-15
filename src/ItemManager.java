@@ -14,7 +14,10 @@ public class ItemManager
 	
 	private Object[][] colums = {{"id", "name", "type", "year", "minutes", "grade", "original" },
 			{"id", "firstName", "lastName", "sex", "year"}, {"id", "firstName", "lastName", "year"}, 
-			{"id", "name"}, {"id", "name", "titleID", "actorID"}};
+			{"id", "firstName", "lastName", "year"}, {"id", "name"}, {"id", "titleID", "genreID" },
+			{"id", "name", "titleID", "actorID"}, {"id", "titleID", "directorID"}, {"id", "titleID", "writerID"}};
+	private String[] itemType = {"titles", "actors", "directors", "writers", "genre", 
+			"genreconnections", "actorroles", "directorroles", "writerroles"};
 	private static final String TITLES = "titles";
 	private static final String ACTORS = "actors";
 	private static final String DIRECTORS = "directors";
@@ -38,24 +41,46 @@ public class ItemManager
 	public ItemManager()
 	{
 		updateTable("titles");
-//		updateTable("actors");
-//		updateTable("directors");
-//		updateTable("writers");
-//		updateTable("genre");
-//		updateTable("genreconnections");
-//		updateTable("actorroles");
-//		updateTable("directorroles");
-//		updateTable("writerroles");
+		updateTable("actors");
+		updateTable("directors");
+		updateTable("writers");
+		updateTable("genre");
+		updateTable("genreconnections");
+		updateTable("actorroles");
+		updateTable("directorroles");
+		updateTable("writerroles");
 	}
 	
 	public ItemComponent getItemTest()
 	{
-		return titles.getComponent(0);
+		return writers.getComponent(0);
 	}
 	
-	public Object[][] getTable()
+	public Object[][] getTable(String table)
 	{
-		return titles.getTable();
+		switch (table)
+		{
+			case TITLES:
+				return titles.getTable();
+			case ACTORS:
+				return actors.getTable();
+			case DIRECTORS:
+				return directors.getTable();
+			case WRITERS:
+				return writers.getTable();
+			case GENRE:
+				return genre.getTable();
+			case GENRE_CONNECTIONS:
+				return genreConnections.getTable();
+			case ACTOR_ROLES:
+				return actorRole.getTable();
+			case DIRECTOR_ROLES:
+				return directorRole.getTable();
+			case WRITER_ROLES:
+				return writerRole.getTable();
+			default:
+				return null;
+		}
 	}
 	
 	public void updateTable(String table)
@@ -155,8 +180,7 @@ public class ItemManager
 	
 	public boolean insertItem(ItemComponent item) throws Exception
 	{
-		String[] itemType = {"titles", "actors", "directors", "writers", "genre", 
-				"genreconnections", "actorroles", "directorroles", "writerroles"};
+		
 		
 		String colum = "";
 		String values = "NULL";
@@ -185,64 +209,24 @@ public class ItemManager
 				
 			) 
 		{	
-			switch (item.getItemType())
+			for(int i = 0; i < item.getItem().length; i++)
 			{
-				case 1:
-					stmt.setString(1, item.getName());
-					stmt.setString(2, item.getTitleType());
-					stmt.setInt(3, item.getReleaseYear());
-					stmt.setInt(4, item.getRunTime());
-					stmt.setFloat(5, item.getGrade());
-					stmt.setInt(6, item.getOriginal());
-//					return "" + id + " " + name + " " + titleType + " " + releaseYear
-//							+ " " + runTime + " " + grade + " " + original;
-					break;
-				case 2:
-					stmt.setString(1, item.getFirstName());
-					stmt.setString(2, item.getLastName());
-					stmt.setString(3, item.getSex());
-					stmt.setInt(4, item.getBirthYear());
-//					return "" + id + " " + firstName + " " + lastName + " " + sex + " " + birthYear;
-					break;
-				case 3:
-					stmt.setString(1, item.getFirstName());
-					stmt.setString(2, item.getLastName());
-					stmt.setInt(3, item.getBirthYear());
-//					return "" + id + " " + firstName + " " + lastName + " " + birthYear;
-					break;
-				case 4:
-					stmt.setString(1, item.getFirstName());
-					stmt.setString(2, item.getLastName());
-					stmt.setInt(3, item.getBirthYear());
-//					return "" + id + " " + firstName + " " + lastName + " " + birthYear;
-					break;
-				case 5:
-					stmt.setString(1, item.getName());
-//					return "" + id + " " + name;
-					break;
-				case 6:
-					stmt.setInt(1, item.getConnectionID1());
-					stmt.setInt(2, item.getConnectionID2());
-//					return "" + id + " " + connectionID1 + " " + connectionID2;
-					break;
-				case 7:
-					stmt.setInt(1, item.getConnectionID1());
-					stmt.setInt(2, item.getConnectionID2());
-//					return "" + id + " " + connectionID1 + " " + connectionID2;
-					break;
-				case 8:
-					stmt.setInt(1, item.getConnectionID1());
-					stmt.setInt(2, item.getConnectionID2());
-					//return "" + id + " " + connectionID1 + " " + connectionID2;
-					break;
-				case 9:
-					stmt.setString(1, item.getName());
-					stmt.setInt(2, item.getConnectionID1());
-					stmt.setInt(3, item.getConnectionID2());
-					//return "" + id + " " + name + " " + connectionID1 + " " + connectionID2;
-					break;
-				default:
-					break;
+				if(item.getItem()[i].getClass().equals(Integer.class))
+				{
+					stmt.setInt(i + 1, (int) item.getItem()[i]);
+				}
+				else if(item.getItem()[i].getClass().equals(String.class))
+				{
+					stmt.setString(i + 1, (String) item.getItem()[i]);
+				}
+				else if(item.getItem()[i].getClass().equals(Float.class))
+				{
+					stmt.setFloat(i + 1, (Float) item.getItem()[i]);
+				}
+				else if(item.getItem()[i].getClass().equals(Boolean.class))
+				{
+					stmt.setBoolean(i + 1, (Boolean) item.getItem()[i]);
+				}
 			}
 			
 			int affected = stmt.executeUpdate();
@@ -264,6 +248,74 @@ public class ItemManager
 			if (keys != null) keys.close();
 		}
 		return true;
+	}
+	
+	public boolean updateItem(ItemComponent item) throws Exception {
+		
+//		
+//		String[] itemType = {"titles", "actors", "directors", "writers", "genre", 
+//				"genreconnections", "actorroles", "directorroles", "writerroles"};
+		
+		String colum = "";
+		for(int i = 1; i < colums[item.getItemType() - 1].length; i++)
+		{
+				
+			colum += colums[item.getItemType() - 1][i];
+			
+			if(i != colums[item.getItemType() - 1].length - 1)
+			{
+				colum += " = ?, ";
+			}
+		}
+		
+		colum += " = ? WHERE id = ?";
+		
+		String sql =
+				"UPDATE " + itemType[item.getItemType() - 1] + " SET " + colum;
+		try (
+				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+			)
+		{
+			
+			for(int i = 0; i < item.getItem().length; i++)
+			{
+				if(item.getItem()[i].getClass().equals(Integer.class))
+				{
+					stmt.setInt(i + 1, (int) item.getItem()[i]);
+				}
+				else if(item.getItem()[i].getClass().equals(String.class))
+				{
+					stmt.setString(i + 1, (String) item.getItem()[i]);
+				}
+				else if(item.getItem()[i].getClass().equals(Float.class))
+				{
+					stmt.setFloat(i + 1, (Float) item.getItem()[i]);
+				}
+				else if(item.getItem()[i].getClass().equals(Boolean.class))
+				{
+					stmt.setBoolean(i + 1, (Boolean) item.getItem()[i]);
+				}
+			}
+			
+			stmt.setInt(item.getItem().length + 1, item.getID());
+			
+			int affected = stmt.executeUpdate();
+			
+			if (affected == 1) {
+				System.out.println("Character changed!");
+				return true;
+			} else {
+				System.err.println("No rows affected");
+				return false;
+			}
+			
+		}
+		catch(SQLException e) {
+			System.err.println(e);
+			return false;
+		}
+
 	}
 	
 	public void displayTableInfo()
