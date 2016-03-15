@@ -27,6 +27,7 @@ public class ItemManager
 	private static final String ACTOR_ROLES = "actorroles";
 	private static final String DIRECTOR_ROLES = "directorroles";
 	private static final String WRITER_ROLES = "writerroles";
+	private static final String SEARCH_TABLE = "search";
 	
 	private ItemComponent titles = new ItemGroup("Titles", 1);
 	private ItemComponent actors = new ItemGroup("Actors", 2);
@@ -37,6 +38,7 @@ public class ItemManager
 	private ItemComponent actorRole = new ItemGroup("Actor Roles", 7);
 	private ItemComponent directorRole = new ItemGroup("Director Roles", 8);
 	private ItemComponent writerRole = new ItemGroup("Writer Roles", 9);
+	private ItemComponent searchTable = new ItemGroup("Search", 0);
 	
 	public ItemManager()
 	{
@@ -49,11 +51,6 @@ public class ItemManager
 		updateTable("actorroles");
 		updateTable("directorroles");
 		updateTable("writerroles");
-	}
-	
-	public ItemComponent getItemTest()
-	{
-		return writers.getComponent(0);
 	}
 	
 	public Object[][] getTable(String table)
@@ -78,6 +75,27 @@ public class ItemManager
 				return directorRole.getTable();
 			case WRITER_ROLES:
 				return writerRole.getTable();
+			case SEARCH_TABLE:
+				return searchTable.getTable();
+			default:
+				return null;
+		}
+	}
+	
+	public ItemComponent getItemComponent(int id, int tableIndex)
+	{
+		switch (tableIndex)
+		{
+			case 0:
+				return titles.getComponent(id);
+			case 1:
+				return genre.getComponent(id);
+			case 2:
+				return actors.getComponent(id);
+			case 3:
+				return writers.getComponent(id);
+			case 4:
+				return directors.getComponent(id);
 			default:
 				return null;
 		}
@@ -86,12 +104,42 @@ public class ItemManager
 	public void updateTable(String table)
 	{
 		
-		System.out.println();
+		String sql = "SELECT * FROM " + table;
+		
+		if(table == ACTOR_ROLES)
+		{
+			sql = "SELECT a.firstName, a.lastName, r.name, t.name AS title " +
+					"FROM actorRoles r " +
+					"JOIN actors a ON r.actorID = a.id " +
+					"JOIN titles t ON r.titleID = t.id";
+		}
+		else if(table == DIRECTOR_ROLES)
+		{
+			sql = "SELECT d.firstName, d.lastName, t.name AS title " +
+					"FROM directorRoles r " +
+					"JOIN directors d ON r.directorID = d.id " +
+					"JOIN titles t ON r.titleID = t.id";
+		}
+		else if(table == WRITER_ROLES )
+		{
+			sql = "SELECT w.firstName, w.lastName, t.name AS title " +
+					"FROM writerRoles r " +
+					"JOIN writers w ON r.writerID = w.id " +
+					"JOIN titles t ON r.titleID = t.id";
+		}
+		else if(table == GENRE_CONNECTIONS )
+		{
+			sql = "SELECT t.name AS title, g.name " +
+					"FROM genreconnections c " +
+					"JOIN genre g ON c.genreID = g.id " +
+					"JOIN titles t ON c.titleID = t.id";
+		}
+		
 		clearTable(table);
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 				Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
+				ResultSet rs = stmt.executeQuery(sql);
 			) 
 		{	
 			while(rs.next())
@@ -118,16 +166,19 @@ public class ItemManager
 						genre.add(new Item(5, rs.getInt("id"), rs.getString("name")));
 						break;
 					case GENRE_CONNECTIONS:
-						genreConnections.add(new Item(6, rs.getInt("id"), rs.getInt("titleID"), rs.getInt("genreID")));
+						genreConnections.add(new Item(6, rs.getString("title"), rs.getString("name")));
 						break;
 					case ACTOR_ROLES:
-						actorRole.add(new Item(7, rs.getInt("id"), rs.getString("name"), rs.getInt("titleID"), rs.getInt("actorID")));
+						actorRole.add(new Item(7, rs.getString("firstName"), rs.getString("lastName"),
+								rs.getString("name"), rs.getString("title")));
 						break;
 					case DIRECTOR_ROLES:
-						directorRole.add(new Item(8, rs.getInt("id"), rs.getInt("titleID"), rs.getInt("directorID")));
+						directorRole.add(new Item(8, rs.getString("firstName"), rs.getString("lastName"),
+								rs.getString("title")));
 						break;
 					case WRITER_ROLES:
-						writerRole.add(new Item(9, rs.getInt("id"), rs.getInt("titleID"), rs.getInt("writerID")));
+						writerRole.add(new Item(9, rs.getString("firstName"), rs.getString("lastName"),
+								rs.getString("title")));
 						break;
 					default:
 						break;
@@ -172,6 +223,9 @@ public class ItemManager
 				break;
 			case WRITER_ROLES:
 				writerRole.clear();
+				break;
+			case SEARCH_TABLE:
+				searchTable.clear();
 				break;
 			default:
 				break;
@@ -247,6 +301,7 @@ public class ItemManager
 		{
 			if (keys != null) keys.close();
 		}
+		updateTable(itemType[item.getItemType() - 1]);
 		return true;
 	}
 	
@@ -303,10 +358,9 @@ public class ItemManager
 			int affected = stmt.executeUpdate();
 			
 			if (affected == 1) {
-				System.out.println("Character changed!");
+				updateTable(itemType[item.getItemType() - 1]);
 				return true;
 			} else {
-				System.err.println("No rows affected");
 				return false;
 			}
 			
@@ -316,6 +370,97 @@ public class ItemManager
 			return false;
 		}
 
+	}
+	
+	public boolean removeItem(ItemComponent item) throws Exception {
+
+		String sql =
+				"DELETE FROM " + itemType[item.getItemType() - 1] + " WHERE " +
+						itemType[item.getItemType() - 1] + ".id = ?";
+		try (
+				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+			)
+		{
+			
+			stmt.setInt(1, item.getID());
+			
+			int affected = stmt.executeUpdate();
+			
+			if (affected == 1) {
+				updateTable(itemType[item.getItemType() - 1]);
+				return true;
+			} else {
+				return false;
+			}
+			
+		}
+		catch(SQLException e) {
+			System.err.println(e);
+			return false;
+		}
+
+	}
+	
+	public void searchTables(String sWord)
+	{
+		
+		String sql[] = {"SELECT titles.name, titles.type, titles.year FROM titles WHERE titles.name  LIKE '%"
+					+ sWord + "%' OR titles.type LIKE '%" + sWord + "%' OR titles.year LIKE '%" + sWord + "%'",
+					
+					"SELECT actors.firstName, actors.lastName FROM actors WHERE actors.firstName" +
+					" LIKE '%" + sWord + "%' OR actors.lastName LIKE '%" + sWord + "%'",
+					
+					"SELECT directors.firstName, directors.lastName FROM directors WHERE " + 
+					"directors.firstName LIKE '%" + sWord + "%' OR directors.lastName LIKE '%" + sWord + "%'",
+					
+					"SELECT writers.firstName, writers.lastName FROM writers WHERE writers.firstName " +
+					"LIKE '%" + sWord + "%' OR writers.lastName LIKE '%" + sWord + "%'",
+					
+					"SELECT genre.name, titles.name AS tname, titles.type FROM genreConnections g JOIN genre ON g.genreID" 
+					+ " = genre.id JOIN titles ON g.titleID = titles.id WHERE genre.name LIKE '%" + sWord + "%'",
+					
+					"SELECT a.name, titles.name AS tname, actors.id FROM actorroles a JOIN actors ON a.actorID = actors.id" +
+					" JOIN titles ON a.titleID = titles.id WHERE a.name LIKE '%" + sWord + "%'"
+					};
+		
+		clearTable("search");
+		for(int i = 0; i < sql.length; i++)
+		{
+			try (
+					Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+					Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+					ResultSet rs = stmt.executeQuery(sql[i]);
+				) 
+			{	
+				while(rs.next())
+				{
+					switch(i)
+					{
+						case 0:
+							searchTable.add(new Item(0, rs.getString("name"), rs.getString("type"), rs.getString("year"), i));
+							break;
+						case 4:
+							searchTable.add(new Item(0, rs.getString("name"), rs.getString("tname"), rs.getString("type"), i));
+							break;
+						case 5:
+							searchTable.add(new Item(0, rs.getString("name"), rs.getString("tname"), 
+									actors.getComponent(rs.getInt("id") - 1).getFirstName() + " " +
+									actors.getComponent(rs.getInt("id") - 1).getLastName(), i));
+							break;
+						default:
+							searchTable.add(new Item(0, rs.getString("firstName"), rs.getString("lastName"), " ", i));
+							break;
+					}
+				}
+			}
+			catch (SQLException e) 
+			{
+				System.err.println("Error message: " + e.getMessage());
+				System.err.println("Error code: " + e.getErrorCode());
+				System.err.println("SQL state: " + e.getSQLState());
+			}
+		}
 	}
 	
 	public void displayTableInfo()
