@@ -86,12 +86,42 @@ public class ItemManager
 	public void updateTable(String table)
 	{
 		
-		System.out.println();
+		String sql = "SELECT * FROM " + table;
+		
+		if(table == ACTOR_ROLES)
+		{
+			sql = "SELECT a.firstName, a.lastName, r.name, t.name AS title " +
+					"FROM actorRoles r " +
+					"JOIN actors a ON r.actorID = a.id " +
+					"JOIN titles t ON r.titleID = t.id";
+		}
+		else if(table == DIRECTOR_ROLES)
+		{
+			sql = "SELECT d.firstName, d.lastName, t.name AS title " +
+					"FROM directorRoles r " +
+					"JOIN directors d ON r.directorID = d.id " +
+					"JOIN titles t ON r.titleID = t.id";
+		}
+		else if(table == WRITER_ROLES )
+		{
+			sql = "SELECT w.firstName, w.lastName, t.name AS title " +
+					"FROM writerRoles r " +
+					"JOIN writers w ON r.writerID = w.id " +
+					"JOIN titles t ON r.titleID = t.id";
+		}
+		else if(table == GENRE_CONNECTIONS )
+		{
+			sql = "SELECT t.name AS title, g.name " +
+					"FROM genreconnections c " +
+					"JOIN genre g ON c.genreID = g.id " +
+					"JOIN titles t ON c.titleID = t.id";
+		}
+		
 		clearTable(table);
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 				Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
+				ResultSet rs = stmt.executeQuery(sql);
 			) 
 		{	
 			while(rs.next())
@@ -118,16 +148,19 @@ public class ItemManager
 						genre.add(new Item(5, rs.getInt("id"), rs.getString("name")));
 						break;
 					case GENRE_CONNECTIONS:
-						genreConnections.add(new Item(6, rs.getInt("id"), rs.getInt("titleID"), rs.getInt("genreID")));
+						genreConnections.add(new Item(6, rs.getString("title"), rs.getString("name")));
 						break;
 					case ACTOR_ROLES:
-						actorRole.add(new Item(7, rs.getInt("id"), rs.getString("name"), rs.getInt("titleID"), rs.getInt("actorID")));
+						actorRole.add(new Item(7, rs.getString("firstName"), rs.getString("lastName"),
+								rs.getString("name"), rs.getString("title")));
 						break;
 					case DIRECTOR_ROLES:
-						directorRole.add(new Item(8, rs.getInt("id"), rs.getInt("titleID"), rs.getInt("directorID")));
+						directorRole.add(new Item(8, rs.getString("firstName"), rs.getString("lastName"),
+								rs.getString("title")));
 						break;
 					case WRITER_ROLES:
-						writerRole.add(new Item(9, rs.getInt("id"), rs.getInt("titleID"), rs.getInt("writerID")));
+						writerRole.add(new Item(9, rs.getString("firstName"), rs.getString("lastName"),
+								rs.getString("title")));
 						break;
 					default:
 						break;

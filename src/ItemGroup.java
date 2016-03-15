@@ -46,21 +46,26 @@ public class ItemGroup extends ItemComponent {
 	
 	public Object[][] getTable()
 	{
-		Object[][] data = new Object[itemComponents.size()][getComponent(1).getItem().length];
-		
-		Iterator itemIterator = itemComponents.iterator();
-		
-		int i = 0;
-		
-		while (itemIterator.hasNext()) {
-
-			ItemComponent itemInfo = (ItemComponent) itemIterator.next();
+		if(itemComponents.size() > 0)
+		{
+			Object[][] data = new Object[itemComponents.size()][getComponent(0).getItem().length];
 			
-			data[i] = itemInfo.getItem();
+			Iterator itemIterator = itemComponents.iterator();
 			
-			i++;
+			int i = 0;
+			
+			while (itemIterator.hasNext()) {
+		
+				ItemComponent itemInfo = (ItemComponent) itemIterator.next();
+				
+				data[i] = itemInfo.getItem();
+				
+				i++;
+			}
+			return data;
 		}
-		return data;
+		else
+			return null;
 	}
 
 	public String displayInfo() 

@@ -6,6 +6,7 @@ public abstract class ItemComponent
 	int connectionID1 = 0;
 	int connectionID2 = 0;
 	String name = null;
+	String titleName = null;
 	String firstName = null;
 	String lastName = null;
 	int releaseYear = 0;
@@ -102,6 +103,16 @@ public abstract class ItemComponent
 	public void setName(String value) 
     {
 		name = value;
+    }
+	
+	public String getTitleName()
+	{
+		return titleName;
+	}
+
+	public void setTitleName(String value) 
+    {
+		titleName = value;
     }
 	
 	public String getFirstName() 
@@ -219,7 +230,7 @@ public abstract class ItemComponent
 		switch (itemType)
 		{
 			case TITLE:
-				return "" + id + " " + name + " " + titleType + " " + releaseYear
+				return "" + id + " " + titleName + " " + titleType + " " + releaseYear
 						+ " " + runTime + " " + grade + " " + original;
 			case ACTOR:
 				return "" + id + " " + firstName + " " + lastName + " " + sex + " " + birthYear;
@@ -247,7 +258,7 @@ public abstract class ItemComponent
 		switch (itemType)
 		{
 			case TITLE:
-				return new Object[] { name, titleType, releaseYear,
+				return new Object[] { titleName, titleType, releaseYear,
 					runTime, grade, original };
 			case ACTOR:
 				return new Object[] { firstName, lastName, sex, birthYear };
@@ -258,13 +269,13 @@ public abstract class ItemComponent
 			case GENRE:
 				return new Object[] { name };
 			case GENRE_CONNECTION:
-				return new Object[] { connectionID1, connectionID2 };
+				return new Object[] { titleName, name };
 			case DIRECTOR_ROLE:
-				return new Object[] { connectionID1, connectionID2 };
+				return new Object[] { firstName, lastName, titleName };
 			case WRITER_ROLE:
-				return new Object[] { connectionID1, connectionID2 };
+				return new Object[] { firstName, lastName, titleName };
 			case ACTOR_ROLE:
-				return new Object[] { name, connectionID1, connectionID2 };
+				return new Object[] { firstName, lastName, name, titleName };
 			default:
 				return null;
 		}

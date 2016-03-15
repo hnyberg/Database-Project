@@ -31,7 +31,7 @@ public class Item extends ItemComponent
 	{
 		this.setItemType(newItemType);
 		this.setId(id);
-		this.setName(name);
+		this.setTitleName(name);
 		this.setTitleType(type);
 		this.setReleaseYear(year);
 		this.setRunTime(time);
@@ -61,6 +61,30 @@ public class Item extends ItemComponent
 		this.setName(name);
 		this.setConnectionID1(id1);
 		this.setConnectionID2(id2);
+	}
+	
+	public Item(int newItemType, String fName, String lName, String name, String title)
+	{
+		this.setItemType(newItemType);
+		this.setName(name);
+		this.setTitleName(title);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+	}
+	
+	public Item(int newItemType, String fName, String lName, String title)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+	}
+	
+	public Item(int newItemType, String name, String title)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
+		this.setName(name);
 	}
 	
 }
