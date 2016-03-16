@@ -3,8 +3,6 @@ public abstract class ItemComponent
 {
 	ItemType itemType = ItemType.UNDEFINED;
 	int id = 0;
-	int connectionID1 = 0;
-	int connectionID2 = 0;
 	String name = null;
 	String titleName = null;
 	String firstName = null;
@@ -39,6 +37,11 @@ public abstract class ItemComponent
 	
 	public ItemComponent getComponent(int componentIndex) 
 	{
+		throw new UnsupportedOperationException();
+	}
+
+	public ItemComponent getByIdComponent(int id2) {
+		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 	
@@ -204,54 +207,6 @@ public abstract class ItemComponent
     {
     	sex = value;
     }
-    
-    public int getConnectionID1()
-	{
-		return connectionID1;
-	}
-    
-    public void setConnectionID1(int value) 
-    {
-    	connectionID1 = value;
-    }
-    
-    public int getConnectionID2()
-	{
-		return connectionID2;
-	}
-    
-    public void setConnectionID2(int value) 
-    {
-    	connectionID2 = value;
-    }
-	
-	public String displayInfo() 
-	{
-		switch (itemType)
-		{
-			case TITLE:
-				return "" + id + " " + titleName + " " + titleType + " " + releaseYear
-						+ " " + runTime + " " + grade + " " + original;
-			case ACTOR:
-				return "" + id + " " + firstName + " " + lastName + " " + sex + " " + birthYear;
-			case DIRECTOR:
-				return "" + id + " " + firstName + " " + lastName + " " + birthYear;
-			case WRITER:
-				return "" + id + " " + firstName + " " + lastName + " " + birthYear;
-			case GENRE:
-				return "" + id + " " + name;
-			case GENRE_CONNECTION:
-				return "" + id + " " + connectionID1 + " " + connectionID2;
-			case DIRECTOR_ROLE:
-				return "" + id + " " + connectionID1 + " " + connectionID2;
-			case WRITER_ROLE:
-				return "" + id + " " + connectionID1 + " " + connectionID2;
-			case ACTOR_ROLE:
-				return "" + id + " " + name + " " + connectionID1 + " " + connectionID2;
-			default:
-				return null;
-		}
-	}
 	
 	public Object[] getItem()
 	{
@@ -281,6 +236,11 @@ public abstract class ItemComponent
 			default:
 				return null;
 		}
+	}
+	
+	public String getGroupName() 
+	{
+		throw new UnsupportedOperationException();
 	}
 	
 	public enum ItemType

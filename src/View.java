@@ -2,26 +2,27 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+
+import sun.audio.AudioData;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+import sun.audio.ContinuousAudioDataStream;
 
 public class View  extends JFrame{
 
@@ -30,18 +31,17 @@ public class View  extends JFrame{
 	private final int TITLE_FONT_SIZE = 45;
 	
 	private final int WINDOW_HEIGHT = 576;
-	private final int TOP_PANEL_HEIGHT = 100;
-	private final int BOTTOM_PANEL_HEIGHT = 60;
+	private final int TOP_PANEL_HEIGHT = 90;
+	private final int BOTTOM_PANEL_HEIGHT = 70;
 	private final int LIST_PANEL_HEIGHT = WINDOW_HEIGHT - TOP_PANEL_HEIGHT - BOTTOM_PANEL_HEIGHT;
 	
 	private final int WINDOW_WIDTH = 1024;
-	private final int MID_PANEL_WIDTH = 650;
-	private final int LEFT_PANEL_WIDTH = 200;
-	private final int RIGHT_PANEL_WIDTH = 150;
+	private final int LEFT_PANEL_WIDTH = 160;
+	private final int RIGHT_PANEL_WIDTH = 180;
+	private final int MID_PANEL_WIDTH = WINDOW_WIDTH - LEFT_PANEL_WIDTH - RIGHT_PANEL_WIDTH;
 	
-	private final int LABEL_WIDTH = 180;
-	private final int LABEL_HEIGHT = 40;
-	
+	private final int LABEL_WIDTH = 140;
+	private final int LABEL_HEIGHT = 35;
 	private final Dimension LABEL_DIMENSION = new Dimension(LABEL_WIDTH, LABEL_HEIGHT);
 	
 	//	VARIABLE FIELDS
@@ -50,13 +50,11 @@ public class View  extends JFrame{
 	//	OBJECT FIELDS
 	private Font standardFont;
 	private Font titleFont;
-	private GridBagConstraints constraints;
 	private ItemManager itemManager;
 	
 	private JLabel insertLabel;
-	private JLabel mainLabel;
+	private JLabel topLabel;
 	private JLabel tabLabel;
-	private JLabel fillerLabel;
 	
 	private JPanel mainPanel;
 	private JPanel leftPanel;
@@ -76,20 +74,18 @@ public class View  extends JFrame{
 	private Vector<JButton> tabButtons;
 	private Vector<JButton> insertButtons;
 	private Vector<JButton> bottomButtons;
-	private Vector<JButton> getIDButtons;
+	private Vector<JButton> getDataButtons;
 	private Vector<JButton> updateButtons;
 	
 	private Vector<JPanel> insertPanels;
 	
 	private Vector<JLabel> titleLabels;
-	private Vector<JLabel> genreLabels;
 	private Vector<JLabel> actorLabels;
 	private Vector<JLabel> writerLabels;
 	private Vector<JLabel> directorLabels;
 	
 	private Vector<JScrollPane> scrollPanes;
 	private Vector<JTextField> titleFields;
-	private Vector<JTextField> genreFields;
 	private Vector<JTextField> actorFields;
 	private Vector<JTextField> writerFields;
 	private Vector<JTextField> directorFields;
@@ -97,14 +93,10 @@ public class View  extends JFrame{
 	private Vector<String> tabStrings;
 	
 	//	COLOR CONSTANTS
-	private final Color BACKGROUND_COLOR = new Color(0.2f,0.2f,0.2f);
-	private final Color RED = new Color(0.7f,0.3f,0.3f);
-	private final Color GREEN = new Color(0.2f,0.6f,0.2f);
-	private final Color BLUE = new Color(0.2f,0.2f,0.6f);
-	private final Color CYAN = new Color(0.2f,0.6f,0.6f);
+	private final Color BACKGROUND_COLOR = new Color(0.1f,0.1f,0.1f);
+	private final Color RED = new Color(0.8f,0.2f,0.2f);
 	private final Color WHITE = new Color(0.9f,0.9f,0.9f);
 	private final Color GREY = new Color(0.5f, 0.5f, 0.5f);
-	private final Color YELLOW = new Color(0.8f, 0.8f, 0.5f);
 	
 	public static void main(String[] args) {
 		new View();
@@ -125,7 +117,7 @@ public class View  extends JFrame{
 		setResizable(false);
 		setFocusable(true);
 		
-		//	CREATE MANAGERS
+		//	CREATE ITEM MANAGER
 		itemManager = new ItemManager();
 		
 		//	CREATE FONTS
@@ -146,7 +138,7 @@ public class View  extends JFrame{
 		leftPanel.setBackground(BACKGROUND_COLOR);
 		mainPanel.add(leftPanel);
 		
-		tabLabel = new JLabel(" TABLES:");
+		tabLabel = new JLabel("TABLES:");
 		tabLabel.setFont(standardFont);
 		tabLabel.setForeground(WHITE);
 		leftPanel.add(tabLabel);
@@ -160,10 +152,10 @@ public class View  extends JFrame{
 		tabStrings.add("Actors");
 		tabStrings.add("Writers");
 		tabStrings.add("Directors");
-		tabStrings.add("GenreConns");
-		tabStrings.add("ActorRoles");
-		tabStrings.add("WriterRoles");
-		tabStrings.add("DirectorRoles");
+		tabStrings.add("GenConns");
+		tabStrings.add("ActRoles");
+		tabStrings.add("WriRoles");
+		tabStrings.add("DirRoles");
 		
 		for (int i = 0; i < tabStrings.size(); i++){
 			tabButtons.add(new JButton(tabStrings.get(i)));
@@ -188,14 +180,15 @@ public class View  extends JFrame{
 		topPanel.setBackground(BACKGROUND_COLOR);
 		midPanel.add(topPanel);
 		
-		mainLabel = new JLabel("Netflix");
-		mainLabel.setFont(titleFont);
-		mainLabel.setForeground(RED);
-		topPanel.add(mainLabel);
+		topLabel = new JLabel("N E T F L I X");
+		topLabel.setFont(titleFont);
+		topLabel.setForeground(RED);
+		topPanel.add(topLabel);
 		
 		//	SET LIST PANEL
 		listPanel = new JPanel();
 		listPanel.setLayout(new BorderLayout());
+		listPanel.setBackground(BACKGROUND_COLOR);
 		listPanel.setPreferredSize(new Dimension(MID_PANEL_WIDTH, LIST_PANEL_HEIGHT));
 		midPanel.add(listPanel);
 		
@@ -204,29 +197,30 @@ public class View  extends JFrame{
 		
 		//	SET BOTTOM PANEL
 		bottomPanel = new JPanel();
-		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-		bottomPanel.setPreferredSize(new Dimension(MID_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
 		bottomPanel.setBackground(BACKGROUND_COLOR);
 		
-		searchField = new JTextField(" search ");
+		searchField = new JTextField("search");
 		searchField.setFont(standardFont);
+		searchField.setPreferredSize(LABEL_DIMENSION);
 		searchField.setHorizontalAlignment(SwingConstants.CENTER);
 		bottomPanel.add(searchField);
 		
 		bottomButtons = new Vector<JButton>(1,1);
-		bottomButtons.add(new JButton("  SEARCH  "));
-		bottomButtons.add(new JButton("  DELETE  "));
+		bottomButtons.add(new JButton("SEARCH"));
+		bottomButtons.add(new JButton("DELETE"));
 		
 		for (int i = 0; i < bottomButtons.size(); i++){
 			bottomButtons.get(i).setFont(standardFont);
-			bottomButtons.get(i).setBackground(RED);
-			bottomButtons.get(i).setForeground(WHITE);
+			bottomButtons.get(i).setPreferredSize(LABEL_DIMENSION);
+			bottomButtons.get(i).setBackground(BACKGROUND_COLOR);
+			bottomButtons.get(i).setForeground(RED);
 			bottomButtons.get(i).addActionListener(new BottomListener());
 		}
 		bottomPanel.add(bottomButtons.get(0));
 		
 		idField = new JTextField("id");
 		idField.setFont(standardFont);
+		idField.setPreferredSize(LABEL_DIMENSION);
 		idField.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		bottomPanel.add(idField);
@@ -240,7 +234,7 @@ public class View  extends JFrame{
 		rightPanel.setBackground(BACKGROUND_COLOR);
 		mainPanel.add(rightPanel);
 		
-		insertLabel = new JLabel(" INSERT:");
+		insertLabel = new JLabel("INSERT:");
 		insertLabel.setFont(standardFont);
 		insertLabel.setForeground(WHITE);
 		rightPanel.add(insertLabel);
@@ -257,26 +251,29 @@ public class View  extends JFrame{
 		
 		//	-> SET INSERT PANEL CONTENTS
 		insertButtons = new Vector<JButton>(1,1);
-		getIDButtons = new Vector<JButton>(1,1);
+		getDataButtons = new Vector<JButton>(1,1);
 		updateButtons = new Vector<JButton>(1,1);
 		getIDFields = new Vector<JTextField>(1,1);
 		for (int i = 0; i < insertPanels.size(); i++){
 			insertButtons.add(new JButton("INSERT"));
 			insertButtons.get(i).setFont(standardFont);
-			insertButtons.get(i).setBackground(RED);
-			insertButtons.get(i).setForeground(WHITE);
+			insertButtons.get(i).setPreferredSize(LABEL_DIMENSION);
+			insertButtons.get(i).setBackground(BACKGROUND_COLOR);
+			insertButtons.get(i).setForeground(RED);
 			insertButtons.get(i).addActionListener(new InsertListener());
 			
-			getIDButtons.add(new JButton("GET DATA"));
-			getIDButtons.get(i).setFont(standardFont);
-			getIDButtons.get(i).setBackground(RED);
-			getIDButtons.get(i).setForeground(WHITE);
-			getIDButtons.get(i).addActionListener(new RightPanelListener());
+			getDataButtons.add(new JButton("GET DATA"));
+			getDataButtons.get(i).setFont(standardFont);
+			getDataButtons.get(i).setPreferredSize(LABEL_DIMENSION);
+			getDataButtons.get(i).setBackground(BACKGROUND_COLOR);
+			getDataButtons.get(i).setForeground(RED);
+			getDataButtons.get(i).addActionListener(new RightPanelListener());
 			
 			updateButtons.add(new JButton("UPDATE"));
 			updateButtons.get(i).setFont(standardFont);
-			updateButtons.get(i).setBackground(RED);
-			updateButtons.get(i).setForeground(WHITE);
+			updateButtons.get(i).setPreferredSize(LABEL_DIMENSION);
+			updateButtons.get(i).setBackground(BACKGROUND_COLOR);
+			updateButtons.get(i).setForeground(RED);
 			updateButtons.get(i).addActionListener(new RightPanelListener());
 			
 			getIDFields.add(new JTextField("id"));
@@ -284,17 +281,15 @@ public class View  extends JFrame{
 			getIDFields.get(i).setFont(standardFont);
 		}
 		
-		//	-> SET INSERT PANEL CONTENTS
-		
-		//	-> INSERT-TITLE PANEL
+		//	-> SET INSERT-TITLE PANEL
 		activeTab = 0;
 		titleLabels = new Vector<JLabel>(1,1);
-		titleLabels.add(new JLabel(" Title"));
-		titleLabels.add(new JLabel(" Type"));
-		titleLabels.add(new JLabel(" Year"));
-		titleLabels.add(new JLabel(" Minutes"));
-		titleLabels.add(new JLabel(" Grade"));
-		titleLabels.add(new JLabel(" Original"));
+		titleLabels.add(new JLabel("Title:"));
+		titleLabels.add(new JLabel("Type:"));
+		titleLabels.add(new JLabel("Year:"));
+		titleLabels.add(new JLabel("Minutes:"));
+		titleLabels.add(new JLabel("Grade:"));
+		titleLabels.add(new JLabel("Original:"));
 		
 		titleFields = new Vector<JTextField>(1,1);
 		for (int i = 0; i < titleLabels.size(); i++){
@@ -305,23 +300,14 @@ public class View  extends JFrame{
 			insertPanels.get(activeTab).add(titleLabels.get(i));
 			insertPanels.get(activeTab).add(titleFields.get(i));
 		}
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(insertButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(getIDFields.get(activeTab));
-		insertPanels.get(activeTab).add(getIDButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(updateButtons.get(activeTab));
 		
-		//	-> INSERT-GENRE PANEL
-		
-		//	-> INSERT-ACTOR PANEL
+		//	-> SET INSERT-ACTOR PANEL
 		activeTab = 2;
 		actorLabels = new Vector<JLabel>(1,1);
-		actorLabels.add(new JLabel(" First Name"));
-		actorLabels.add(new JLabel(" Last Name"));
-		actorLabels.add(new JLabel(" Sex"));
-		actorLabels.add(new JLabel(" Year"));
+		actorLabels.add(new JLabel("First Name:"));
+		actorLabels.add(new JLabel("Last Name:"));
+		actorLabels.add(new JLabel("Sex:"));
+		actorLabels.add(new JLabel("Year:"));
 		
 		actorFields = new Vector<JTextField>(1,1);
 		for (int i = 0; i < actorLabels.size(); i++){
@@ -332,20 +318,13 @@ public class View  extends JFrame{
 			insertPanels.get(activeTab).add(actorLabels.get(i));
 			insertPanels.get(activeTab).add(actorFields.get(i));
 		}
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(insertButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(getIDFields.get(activeTab));
-		insertPanels.get(activeTab).add(getIDButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(updateButtons.get(activeTab));
 		
-		//	-> INSERT-WRITER PANEL
+		//	-> SET INSERT-WRITER PANEL
 		activeTab = 3;
 		writerLabels = new Vector<JLabel>(1,1);
-		writerLabels.add(new JLabel(" First Name"));
-		writerLabels.add(new JLabel(" Last Name"));
-		writerLabels.add(new JLabel(" Year"));
+		writerLabels.add(new JLabel("First Name:"));
+		writerLabels.add(new JLabel("Last Name:"));
+		writerLabels.add(new JLabel("Year:"));
 		
 		writerFields = new Vector<JTextField>(1,1);
 		
@@ -357,20 +336,13 @@ public class View  extends JFrame{
 			insertPanels.get(activeTab).add(writerLabels.get(i));
 			insertPanels.get(activeTab).add(writerFields.get(i));
 		}
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(insertButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(getIDFields.get(activeTab));
-		insertPanels.get(activeTab).add(getIDButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(updateButtons.get(activeTab));
 		
-		//	-> INSERT-DIRECTOR PANEL
+		//	-> SET INSERT-DIRECTOR PANEL
 		activeTab = 4;
 		directorLabels = new Vector<JLabel>(1,1);
-		directorLabels.add(new JLabel(" First Name"));
-		directorLabels.add(new JLabel(" Last Name"));
-		directorLabels.add(new JLabel(" Year"));
+		directorLabels.add(new JLabel("First Name:"));
+		directorLabels.add(new JLabel("Last Name:"));
+		directorLabels.add(new JLabel("Year:"));
 		
 		directorFields = new Vector<JTextField>(1,1);
 		
@@ -382,15 +354,19 @@ public class View  extends JFrame{
 			insertPanels.get(activeTab).add(directorLabels.get(i));
 			insertPanels.get(activeTab).add(directorFields.get(i));
 		}
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(insertButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(getIDFields.get(activeTab));
-		insertPanels.get(activeTab).add(getIDButtons.get(activeTab));
-		insertPanels.get(activeTab).add(new JLabel(" "));
-		insertPanels.get(activeTab).add(updateButtons.get(activeTab));
-
-		//	-> INSERT ALL INSERT PANELS
+		
+		//	INSERT MORE CONTENTS ON EVERY PANEL
+		for (int i = 0; i < insertPanels.size(); i++){
+			insertPanels.get(i).add(new JLabel(" "));
+			insertPanels.get(i).add(insertButtons.get(i));
+			insertPanels.get(i).add(new JLabel(" "));
+			insertPanels.get(i).add(getIDFields.get(i));
+			insertPanels.get(i).add(getDataButtons.get(i));
+			insertPanels.get(i).add(new JLabel(" "));
+			insertPanels.get(i).add(updateButtons.get(i));
+		}
+		
+		//	-> ADD ALL INSERT PANELS
 		for (int i = 0; i < insertPanels.size(); i++){
 			rightPanel.add(insertPanels.get(i));
 			insertPanels.get(i).setVisible(false);
@@ -404,6 +380,7 @@ public class View  extends JFrame{
 		
 		//	SET VISIBLE
 		setVisible(true);
+		music();
 	}
 	
 	private void updateTables(){
@@ -433,20 +410,20 @@ public class View  extends JFrame{
 		
 		//	ADJUST TITLE COLUMN WITHS
 		currentTable = (JTable)scrollPanes.get(0).getViewport().getView();
-		currentTable.getColumnModel().getColumn(0).setPreferredWidth(20);
-		currentTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
+		currentTable.getColumnModel().getColumn(1).setPreferredWidth(180);
 		
 		currentTable = (JTable)scrollPanes.get(1).getViewport().getView();
-		currentTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
 		
 		currentTable = (JTable)scrollPanes.get(2).getViewport().getView();
-		currentTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
 		
 		currentTable = (JTable)scrollPanes.get(3).getViewport().getView();
-		currentTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
 		
 		currentTable = (JTable)scrollPanes.get(4).getViewport().getView();
-		currentTable.getColumnModel().getColumn(0).setPreferredWidth(20);
+		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
 		
 		currentTable = (JTable)scrollPanes.get(6).getViewport().getView();
 		currentTable.getColumnModel().getColumn(3).setPreferredWidth(150);
@@ -460,6 +437,21 @@ public class View  extends JFrame{
 		listPanel.removeAll();
 		listPanel.add(scrollPanes.get(activeTab));
 		listPanel.validate();
+	}
+	
+	public static void music(){
+		AudioPlayer player = AudioPlayer.player;
+		AudioStream music;
+		AudioData data;
+		ContinuousAudioDataStream loop = null;
+		
+		try{
+			music = new AudioStream(new FileInputStream("Fox.mp3"));
+			data = music.getData();
+			loop = new ContinuousAudioDataStream(data);
+		}catch(IOException error){}
+		
+		player.start(loop);
 	}
 	
 	class TabListener implements ActionListener{
@@ -498,16 +490,16 @@ public class View  extends JFrame{
 					activeTab = 4;
 					insertPanels.get(activeTab).setVisible(true);
 					break;
-				case "GenreConns":
+				case "GenConns":
 					activeTab = 5;
 					break;
-				case "ActorRoles":
+				case "ActRoles":
 					activeTab = 6;
 					break;
-				case "WriterRoles":
+				case "WriRoles":
 					activeTab = 7;
 					break;
-				case "DirectorRoles":
+				case "DirRoles":
 					activeTab = 8;
 					break;
 				default:
@@ -638,15 +630,15 @@ public class View  extends JFrame{
 				break;
 			case 1:
 				try {
-					itemManager.removeItem(
-							itemManager.getItemComponent((Integer.parseInt(idField.getText())-1), activeTab)
-					);
+					
+					itemManager.removeItem(itemManager.getItemComponent(Integer.parseInt(idField.getText()), activeTab));
+					updateTables();
+					
 				} catch (NumberFormatException e1) {
 					e1.printStackTrace();
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				updateTables();
 				break;
 			default:
 				break;
@@ -658,92 +650,135 @@ public class View  extends JFrame{
 		public void actionPerformed(ActionEvent e){
 			
 			ItemComponent item;
-			int id = Integer.parseInt(getIDFields.get(activeTab).getText()) - 1;
-			switch (((JButton)(e.getSource())).getText()){
-			
-				case "GET DATA":
-					
-					item = itemManager.getItemComponent(id, activeTab);
-					switch (activeTab)
-					{
-						case 0:
-							titleFields.get(0).setText(item.getTitleName());
-							titleFields.get(1).setText(item.getTitleType());
-							titleFields.get(2).setText("" + item.getReleaseYear());
-							titleFields.get(3).setText("" + item.getRunTime());
-							titleFields.get(4).setText("" + item.getGrade());
-							titleFields.get(5).setText("" + item.getOriginal());
-							break;
-							
-						case 2:
-							actorFields.get(0).setText(item.getFirstName());
-							actorFields.get(1).setText(item.getLastName());
-							actorFields.get(2).setText(item.getSex());
-							actorFields.get(3).setText("" + item.getBirthYear());
-							break;
-							
-						case 3:
-							writerFields.get(0).setText(item.getFirstName());
-							writerFields.get(1).setText(item.getLastName());
-							writerFields.get(2).setText("" + item.getBirthYear());
-							break;
-							
-						case 4:
-							directorFields.get(0).setText(item.getFirstName());
-							directorFields.get(1).setText(item.getLastName());
-							directorFields.get(2).setText("" + item.getBirthYear());
-							break;
-							
-						default:
-							break;
-					}
-					break;
-				case "UPDATE":
-					item = itemManager.getItemComponent(id, activeTab);
-					switch (activeTab)
-					{
-						case 0:
-							item.setTitleName(titleFields.get(0).getText());
-							item.setTitleType(titleFields.get(1).getText());
-							item.setReleaseYear(Integer.parseInt(titleFields.get(2).getText()));
-							item.setRunTime(Integer.parseInt(titleFields.get(3).getText()));
-							item.setGrade(Integer.parseInt(titleFields.get(4).getText()));
-							item.setOriginal(Integer.parseInt(titleFields.get(5).getText()));
-							break;
-							
-						case 2:
-							item.setFirstName(actorFields.get(0).getText());
-							item.setLastName(actorFields.get(1).getText());
-							item.setSex(actorFields.get(2).getText());
-							item.setBirthYear(Integer.parseInt(actorFields.get(3).getText()));
-							break;
-							
-						case 3:
-							item.setFirstName(writerFields.get(0).getText());
-							item.setLastName(writerFields.get(1).getText());
-							item.setBirthYear(Integer.parseInt(writerFields.get(2).getText()));
-							break;
-							
-						case 4:
-							item.setFirstName(directorFields.get(0).getText());
-							item.setLastName(directorFields.get(1).getText());
-							item.setBirthYear(Integer.parseInt(directorFields.get(2).getText()));
-							break;
-							
-						default:
-							break;
-					}
-				try {
-					itemManager.updateItem(item);
-				} catch (Exception e1) {
-					e1.printStackTrace();
+			int id = 0;
+			boolean idOK = true;
+			try{
+				id = Integer.parseInt(getIDFields.get(activeTab).getText());
+			}
+			catch(Exception idE){
+				idOK = false;
+			}
+			if (idOK){
+				
+				switch (((JButton)(e.getSource())).getText())
+				{
+					case "GET DATA":
+						
+						item = itemManager.getItemComponent(id, activeTab);
+						switch (activeTab)
+						{
+							case 0:
+								titleFields.get(0).setText(item.getTitleName());
+								titleFields.get(1).setText(item.getTitleType());
+								titleFields.get(2).setText("" + item.getReleaseYear());
+								titleFields.get(3).setText("" + item.getRunTime());
+								titleFields.get(4).setText("" + item.getGrade());
+								titleFields.get(5).setText("" + item.getOriginal());
+								break;
+								
+							case 2:
+								actorFields.get(0).setText(item.getFirstName());
+								actorFields.get(1).setText(item.getLastName());
+								actorFields.get(2).setText(item.getSex());
+								actorFields.get(3).setText("" + item.getBirthYear());
+								break;
+								
+							case 3:
+								writerFields.get(0).setText(item.getFirstName());
+								writerFields.get(1).setText(item.getLastName());
+								writerFields.get(2).setText("" + item.getBirthYear());
+								break;
+								
+							case 4:
+								directorFields.get(0).setText(item.getFirstName());
+								directorFields.get(1).setText(item.getLastName());
+								directorFields.get(2).setText("" + item.getBirthYear());
+								break;
+								
+							default:
+								break;
+						}
+						break;
+					case "UPDATE":
+						item = itemManager.getItemComponent(id, activeTab);
+						boolean notEmpty = true;
+						
+						switch (activeTab)
+						{
+							case 0:
+								for (int i = 0; i < titleFields.size(); i++){
+									if (titleFields.get(i).getText().equals("")){
+										notEmpty = false;
+									}
+								}
+								if (notEmpty){
+									item.setTitleName(titleFields.get(0).getText());
+									item.setTitleType(titleFields.get(1).getText());
+									item.setReleaseYear(Integer.parseInt(titleFields.get(2).getText()));
+									item.setRunTime(Integer.parseInt(titleFields.get(3).getText()));
+									item.setGrade(Float.parseFloat(titleFields.get(4).getText()));
+									item.setOriginal(Integer.parseInt(titleFields.get(5).getText()));
+								}
+								break;
+								
+							case 2:
+								for (int i = 0; i < actorFields.size(); i++){
+									if (actorFields.get(i).getText().equals("")){
+										notEmpty = false;
+									}
+								}
+								if (notEmpty){
+									item.setFirstName(actorFields.get(0).getText());
+									item.setLastName(actorFields.get(1).getText());
+									item.setSex(actorFields.get(2).getText());
+									item.setBirthYear(Integer.parseInt(actorFields.get(3).getText()));
+								}
+								break;
+								
+							case 3:
+								for (int i = 0; i < writerFields.size(); i++){
+									if (writerFields.get(i).getText().equals("")){
+										notEmpty = false;
+									}
+								}
+								if (notEmpty){
+									item.setFirstName(writerFields.get(0).getText());
+									item.setLastName(writerFields.get(1).getText());
+									item.setBirthYear(Integer.parseInt(writerFields.get(2).getText()));
+								}
+								break;
+								
+							case 4:
+								for (int i = 0; i < directorFields.size(); i++){
+									if (directorFields.get(i).getText().equals("")){
+										notEmpty = false;
+									}
+								}
+								if (notEmpty){
+									item.setFirstName(directorFields.get(0).getText());
+									item.setLastName(directorFields.get(1).getText());
+									item.setBirthYear(Integer.parseInt(directorFields.get(2).getText()));
+								}
+								break;
+								
+							default:
+								break;
+						}
+						if (notEmpty){
+							try {
+								
+								itemManager.updateItem(item);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+							updateTables();
+						}
+						break;
+					//	End of GET DATA / UPDATE
+					default:
+						break;
 				}
-				updateTables();
-					break;
-				default:
-					break;
-				}
-			
+			}
 		}
 	}
 }

@@ -3,10 +3,7 @@ public class Item extends ItemComponent
 {
 	
 	
-	public Item() 
-	{
-		
-	}
+	public Item() {	}
 	
 	public Item(int newItemType, int id, String fName, String lName, String sex, int year)
 	{
@@ -44,23 +41,6 @@ public class Item extends ItemComponent
 		this.setItemType(newItemType);
 		this.setId(id);
 		this.setName(name);
-	}
-	
-	public Item(int newItemType, int id, int id1, int id2)
-	{
-		this.setItemType(newItemType);
-		this.setId(id);
-		this.setConnectionID1(id1);
-		this.setConnectionID2(id2);
-	}
-	
-	public Item(int newItemType, int id, String name, int id1, int id2)
-	{
-		this.setItemType(newItemType);
-		this.setId(id);
-		this.setName(name);
-		this.setConnectionID1(id1);
-		this.setConnectionID2(id2);
 	}
 	
 	public Item(int newItemType, String fName, String lName, String name, String title)
