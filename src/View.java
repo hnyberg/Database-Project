@@ -260,7 +260,7 @@ public class View  extends JFrame{
 			insertButtons.get(i).setPreferredSize(LABEL_DIMENSION);
 			insertButtons.get(i).setBackground(BACKGROUND_COLOR);
 			insertButtons.get(i).setForeground(RED);
-			insertButtons.get(i).addActionListener(new InsertListener());
+			insertButtons.get(i).addActionListener(new RightPanelListener());
 			
 			getDataButtons.add(new JButton("GET DATA"));
 			getDataButtons.get(i).setFont(standardFont);
@@ -455,55 +455,33 @@ public class View  extends JFrame{
 	}
 	
 	class TabListener implements ActionListener{
-		
-		public void actionPerformed(ActionEvent e){
-			
-			for (int i = 0; i < tabButtons.size(); i++){
-				tabButtons.get(i).setForeground(GREY);
-			}
-			((JButton)(e.getSource())).setForeground(WHITE);
-			
+		public void actionPerformed(ActionEvent e)
+		{
 			//	CLEAR MID AND RIGHT PANELS
 			listPanel.removeAll();
+			
+			// HIDE PANELS
 			for (int i = 0; i < insertPanels.size(); i++){
 				insertPanels.get(i).setVisible(false);
 			}
 			
-			switch (((JButton)(e.getSource())).getText())
+			// LOOP THROUGH BUTTONS
+			for (int i = 0; i < tabButtons.size(); i++)
 			{
-				case "Titles":
-					activeTab = 0;
-					insertPanels.get(activeTab).setVisible(true);
-					break;
-				case "Genres":
-					activeTab = 1;
-					break;
-				case "Actors":
-					activeTab = 2;
-					insertPanels.get(activeTab).setVisible(true);
-					break;
-				case "Writers":
-					activeTab = 3;
-					insertPanels.get(activeTab).setVisible(true);
-					break;
-				case "Directors":
-					activeTab = 4;
-					insertPanels.get(activeTab).setVisible(true);
-					break;
-				case "GenConns":
-					activeTab = 5;
-					break;
-				case "ActRoles":
-					activeTab = 6;
-					break;
-				case "WriRoles":
-					activeTab = 7;
-					break;
-				case "DirRoles":
-					activeTab = 8;
-					break;
-				default:
-					break;
+				tabButtons.get(i).setForeground(GREY);
+				
+				// GET BUTTON CLICKED
+				if(tabButtons.get(i).equals((JButton)(e.getSource())))
+				{
+					tabButtons.get(i).setForeground(WHITE);
+					
+					// CHANGE TAB AND SET VISIBLE
+					activeTab = i;
+					if(i < 5 && i != 1)
+					{
+						insertPanels.get(activeTab).setVisible(true);
+					}
+				}
 			}
 			updateTables();
 			listPanel.validate();
@@ -511,272 +489,240 @@ public class View  extends JFrame{
 		}
 	}
 	
-	class InsertListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			
-			ItemComponent insertItem = new ItemGroup("Insert", 0);
-			
-			boolean notEmpty = true;
-			
-			switch (activeTab)
+	class BottomListener implements ActionListener{
+		public void actionPerformed(ActionEvent e)
+		{
+			// Search and Destroy buttons
+			switch (bottomButtons.indexOf((JButton)(e.getSource())))
+			{
+				// Search SQL with searchField text and create Table
+				case 0:
+					itemManager.searchTables(searchField.getText());
+					searchPane = new JScrollPane(new JTable(itemManager.getTable("search"), new String[]{"","",""}));
+					listPanel.removeAll();
+					listPanel.add(searchPane);
+					listPanel.validate();
+					break;
+				// Remove SQL Item From ID then Update Table
+				case 1:
+					try {
+						itemManager.removeItem(itemManager.getItemComponent(Integer.parseInt(idField.getText()), activeTab));
+						updateTables();
+						
+					} catch (NumberFormatException e1) {
+						e1.printStackTrace();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	
+	class RightPanelListener implements ActionListener
+	{
+		public boolean notEmpty(int tab)
+		{
+			// Check if Fields are empty depending on Table
+			switch (tab)
 			{
 				case 0:
 					for (int i = 0; i < titleFields.size(); i++){
 						if (titleFields.get(i).getText().equals("")){
-							notEmpty = false;
+							return false;
 						}
 					}
-					if (notEmpty){
-						insertItem.add(new Item(
-								1,
-								0,
-								titleFields.get(0).getText(),
-								titleFields.get(1).getText(),
-								Integer.parseInt(titleFields.get(2).getText()),
-								Integer.parseInt(titleFields.get(3).getText()),
-								Float.parseFloat(titleFields.get(4).getText()),
-								Integer.parseInt(titleFields.get(5).getText())));
-						for (int i = 0; i < titleFields.size(); i++){
-							titleFields.get(i).setText("");
-						}
-					}
-					break;
-					
+					return true;
 				case 2:
 					for (int i = 0; i < actorFields.size(); i++){
-						if (actorFields.get(i).getText().equals("")){
-							notEmpty = false;
+						if(actorFields.get(i).getText().equals("")){
+							return false;
 						}
 					}
-					if (notEmpty){
-						insertItem.add(new Item(
-								2,
-								0,
-								actorFields.get(0).getText(),
-								actorFields.get(1).getText(),
-								actorFields.get(2).getText(),
-								Integer.parseInt(actorFields.get(3).getText())));
-						for (int i = 0; i < actorFields.size(); i++){
-							actorFields.get(i).setText("");
-						}
-					}
-					break;
-					
+					return true;
 				case 3:
 					for (int i = 0; i < writerFields.size(); i++){
 						if (writerFields.get(i).getText().equals("")){
-							notEmpty = false;
+							return false;
 						}
 					}
-					if (notEmpty){
-						insertItem.add(new Item(
-								4,
-								0,
-								writerFields.get(0).getText(),
-								writerFields.get(1).getText(),
-								Integer.parseInt(writerFields.get(2).getText())));
-						for (int i = 0; i < writerFields.size(); i++){
-							writerFields.get(i).setText("");
-						}
-					}
-					break;
-					
+					return true;
 				case 4:
 					for (int i = 0; i < directorFields.size(); i++){
 						if (directorFields.get(i).getText().equals("")){
-							notEmpty = false;
+							return false;
 						}
 					}
-					if (notEmpty){
-						insertItem.add(new Item(
-								3,
-								0,
-								directorFields.get(0).getText(),
-								directorFields.get(1).getText(),
-								Integer.parseInt(directorFields.get(2).getText())));
-						for (int i = 0; i < directorFields.size(); i++){
-							directorFields.get(i).setText("");
-						}
-					}
-					break;
-					
+					return true;
 				default:
-					break;
-			}
-			if (notEmpty){
-				try {
-					itemManager.insertItem(insertItem.getComponent(0));
-					updateTables();
-					
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-			insertItem.clear();
-		}
-	}
-	
-	class BottomListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			
-			switch (bottomButtons.indexOf((JButton)(e.getSource()))){
-			
-			case 0:
-				itemManager.searchTables(searchField.getText());
-				searchPane = new JScrollPane(new JTable(itemManager.getTable("search"), new String[]{"","",""}));
-				listPanel.removeAll();
-				listPanel.add(searchPane);
-				listPanel.validate();
-				break;
-			case 1:
-				try {
-					
-					itemManager.removeItem(itemManager.getItemComponent(Integer.parseInt(idField.getText()), activeTab));
-					updateTables();
-					
-				} catch (NumberFormatException e1) {
-					e1.printStackTrace();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				break;
-			default:
-				break;
+					return false;
 			}
 		}
-	}
-	
-	class RightPanelListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){
-			
-			ItemComponent item;
+		
+		public void clearFields()
+		{
+			// Clear Fields
+			for (int i = 0; i < titleFields.size(); i++){
+				titleFields.get(i).setText("");
+			}
+			for (int i = 0; i < actorFields.size(); i++){
+				actorFields.get(i).setText("");
+			}
+			for (int i = 0; i < writerFields.size(); i++){
+				writerFields.get(i).setText("");
+			}
+			for (int i = 0; i < directorFields.size(); i++){
+				directorFields.get(i).setText("");
+			}
+		}
+		
+		public void actionPerformed(ActionEvent e)
+		{
+			// Variables
+			ItemComponent insertItem = new ItemGroup("Insert", 0);
+			ItemComponent item = null;
 			int id = 0;
 			boolean idOK = true;
-			try{
-				id = Integer.parseInt(getIDFields.get(activeTab).getText());
+			
+			if(((JButton)(e.getSource())).getText() == "UPDATE" || ((JButton)(e.getSource())).getText() == "GET DATA" )
+			{
+				// Get ID and check ID
+				try{
+					id = Integer.parseInt(getIDFields.get(activeTab).getText());
+					item = itemManager.getItemComponent(id, activeTab);
+				}
+				catch(Exception idE){
+					idOK = false;
+				}
 			}
-			catch(Exception idE){
-				idOK = false;
+			
+			// Insert Button Clicked
+			if(((JButton)(e.getSource())).getText() == "INSERT")
+			{
+				// Check if Data in Fields
+				if (notEmpty(activeTab))
+				{
+					// Insert Data in a new Item depending on Table
+					switch (activeTab)
+					{	
+						case 0:
+							insertItem.add(new Item(1, 0, titleFields.get(0).getText(), titleFields.get(1).getText(),
+								Integer.parseInt(titleFields.get(2).getText()), Integer.parseInt(titleFields.get(3).getText()),
+								Float.parseFloat(titleFields.get(4).getText()), Integer.parseInt(titleFields.get(5).getText())));
+							break;
+						case 2:
+							insertItem.add(new Item(2, 0, actorFields.get(0).getText(), actorFields.get(1).getText(),
+								actorFields.get(2).getText(), Integer.parseInt(actorFields.get(3).getText())));
+							break;
+						case 3:
+							insertItem.add(new Item(4, 0, writerFields.get(0).getText(), writerFields.get(1).getText(),
+								Integer.parseInt(writerFields.get(2).getText())));
+							break;
+						case 4:
+							insertItem.add(new Item(3, 0, directorFields.get(0).getText(), directorFields.get(1).getText(),
+								Integer.parseInt(directorFields.get(2).getText())));
+							break;
+						default:
+							break;
+					}
+					try {
+						// Send Item To SQL and Update Table
+						itemManager.insertItem(insertItem.getComponent(0));
+						clearFields();
+						updateTables();
+						
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				insertItem.clear();
 			}
-			if (idOK){
-				
+			else if (idOK) // If ID OK;
+			{
+				// Get Data and Update Buttons
 				switch (((JButton)(e.getSource())).getText())
 				{
+					// Start Data Buttons
 					case "GET DATA":
-						
-						item = itemManager.getItemComponent(id, activeTab);
-						switch (activeTab)
-						{
-							case 0:
-								titleFields.get(0).setText(item.getTitleName());
-								titleFields.get(1).setText(item.getTitleType());
-								titleFields.get(2).setText("" + item.getReleaseYear());
-								titleFields.get(3).setText("" + item.getRunTime());
-								titleFields.get(4).setText("" + item.getGrade());
-								titleFields.get(5).setText("" + item.getOriginal());
-								break;
-								
-							case 2:
-								actorFields.get(0).setText(item.getFirstName());
-								actorFields.get(1).setText(item.getLastName());
-								actorFields.get(2).setText(item.getSex());
-								actorFields.get(3).setText("" + item.getBirthYear());
-								break;
-								
-							case 3:
-								writerFields.get(0).setText(item.getFirstName());
-								writerFields.get(1).setText(item.getLastName());
-								writerFields.get(2).setText("" + item.getBirthYear());
-								break;
-								
-							case 4:
-								directorFields.get(0).setText(item.getFirstName());
-								directorFields.get(1).setText(item.getLastName());
-								directorFields.get(2).setText("" + item.getBirthYear());
-								break;
-								
-							default:
-								break;
-						}
-						break;
-					case "UPDATE":
-						item = itemManager.getItemComponent(id, activeTab);
-						boolean notEmpty = true;
-						
+						// Get Data From Item and set in Fields depending on Table
 						switch (activeTab)
 						{
 							case 0:
 								for (int i = 0; i < titleFields.size(); i++){
-									if (titleFields.get(i).getText().equals("")){
-										notEmpty = false;
-									}
+									titleFields.get(i).setText(item.getItem()[i + 1].toString());
 								}
-								if (notEmpty){
+								break;
+							case 2:
+								for (int i = 0; i < actorFields.size(); i++){
+									actorFields.get(i).setText(item.getItem()[i + 1].toString());
+								}
+								break;
+							case 3:
+								for (int i = 0; i < writerFields.size(); i++){
+									writerFields.get(i).setText(item.getItem()[i + 1].toString());
+								}
+								break;
+							case 4:
+								for (int i = 0; i < directorFields.size(); i++){
+									directorFields.get(i).setText(item.getItem()[i + 1].toString());
+								}
+								break;
+							default:
+								break;
+						}
+						// End Data Buttons
+						break;
+						// Start Update Buttons
+					case "UPDATE":
+						// Check if Data in Fields
+						if (notEmpty(activeTab))
+						{
+							// Put New Data In Item depending on Table
+							switch (activeTab)
+							{
+								case 0:
 									item.setTitleName(titleFields.get(0).getText());
 									item.setTitleType(titleFields.get(1).getText());
 									item.setReleaseYear(Integer.parseInt(titleFields.get(2).getText()));
 									item.setRunTime(Integer.parseInt(titleFields.get(3).getText()));
 									item.setGrade(Float.parseFloat(titleFields.get(4).getText()));
 									item.setOriginal(Integer.parseInt(titleFields.get(5).getText()));
-								}
-								break;
-								
-							case 2:
-								for (int i = 0; i < actorFields.size(); i++){
-									if (actorFields.get(i).getText().equals("")){
-										notEmpty = false;
-									}
-								}
-								if (notEmpty){
+									break;
+								case 2:
 									item.setFirstName(actorFields.get(0).getText());
 									item.setLastName(actorFields.get(1).getText());
 									item.setSex(actorFields.get(2).getText());
 									item.setBirthYear(Integer.parseInt(actorFields.get(3).getText()));
-								}
-								break;
-								
-							case 3:
-								for (int i = 0; i < writerFields.size(); i++){
-									if (writerFields.get(i).getText().equals("")){
-										notEmpty = false;
-									}
-								}
-								if (notEmpty){
+									break;
+								case 3:
 									item.setFirstName(writerFields.get(0).getText());
 									item.setLastName(writerFields.get(1).getText());
 									item.setBirthYear(Integer.parseInt(writerFields.get(2).getText()));
-								}
-								break;
-								
-							case 4:
-								for (int i = 0; i < directorFields.size(); i++){
-									if (directorFields.get(i).getText().equals("")){
-										notEmpty = false;
-									}
-								}
-								if (notEmpty){
+									break;
+								case 4:
 									item.setFirstName(directorFields.get(0).getText());
 									item.setLastName(directorFields.get(1).getText());
 									item.setBirthYear(Integer.parseInt(directorFields.get(2).getText()));
-								}
-								break;
-								
-							default:
-								break;
-						}
-						if (notEmpty){
+									break;
+								default:
+									break;
+							}
 							try {
-								
+								// Send changes to SQL and Update Table
 								itemManager.updateItem(item);
+								clearFields();
+								updateTables();
+								
 							} catch (Exception e1) {
 								e1.printStackTrace();
 							}
-							updateTables();
 						}
 						break;
-					//	End of GET DATA / UPDATE
 					default:
 						break;
+					//	End of GET DATA / UPDATE
 				}
 			}
 		}

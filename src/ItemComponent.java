@@ -30,6 +30,11 @@ public abstract class ItemComponent
 		throw new UnsupportedOperationException();
 	}
 	
+	public String getGroupName() 
+	{
+		throw new UnsupportedOperationException();
+	}
+	
 	public Object[][] getTable()
 	{
 		throw new UnsupportedOperationException();
@@ -40,15 +45,14 @@ public abstract class ItemComponent
 		throw new UnsupportedOperationException();
 	}
 
-	public ItemComponent getByIdComponent(int id2) {
-		// TODO Auto-generated method stub
+	public ItemComponent getByIdComponent(int id2) 
+	{
 		throw new UnsupportedOperationException();
 	}
 	
 	public int getItemType()
 	{
 		return itemType.type;
-		//return itemType;
 	}
 	
 	public void setItemType(int value) 
@@ -213,13 +217,8 @@ public abstract class ItemComponent
 		switch (itemType)
 		{
 			case TITLE:
-<<<<<<< HEAD
-				return "" + id + " " + titleName + " " + titleType + " " + releaseYear
-						+ " " + runTime + " " + grade + " " + original;
-=======
 				return new Object[] { id, titleName, titleType, releaseYear,
 					runTime, grade, original };
->>>>>>> refs/remotes/hnyberg/master
 			case ACTOR:
 				return new Object[] { id, firstName, lastName, sex, birthYear };
 			case DIRECTOR:
@@ -241,38 +240,6 @@ public abstract class ItemComponent
 			default:
 				return null;
 		}
-	}
-	
-	public String getGroupName() 
-	{
-<<<<<<< HEAD
-		switch (itemType)
-		{
-			case TITLE:
-				return new Object[] { titleName, titleType, releaseYear,
-					runTime, grade, original };
-			case ACTOR:
-				return new Object[] { firstName, lastName, sex, birthYear };
-			case DIRECTOR:
-				return new Object[] { firstName, lastName, birthYear };
-			case WRITER:
-				return new Object[] { firstName, lastName, birthYear };
-			case GENRE:
-				return new Object[] { name };
-			case GENRE_CONNECTION:
-				return new Object[] { titleName, name };
-			case DIRECTOR_ROLE:
-				return new Object[] { firstName, lastName, titleName };
-			case WRITER_ROLE:
-				return new Object[] { firstName, lastName, titleName };
-			case ACTOR_ROLE:
-				return new Object[] { firstName, lastName, name, titleName };
-			default:
-				return null;
-		}
-=======
-		throw new UnsupportedOperationException();
->>>>>>> refs/remotes/hnyberg/master
 	}
 	
 	public enum ItemType
