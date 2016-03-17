@@ -3,8 +3,6 @@ public abstract class ItemComponent
 {
 	ItemType itemType = ItemType.UNDEFINED;
 	int id = 0;
-	int connectionID1 = 0;
-	int connectionID2 = 0;
 	String name = null;
 	String titleName = null;
 	String firstName = null;
@@ -39,6 +37,11 @@ public abstract class ItemComponent
 	
 	public ItemComponent getComponent(int componentIndex) 
 	{
+		throw new UnsupportedOperationException();
+	}
+
+	public ItemComponent getByIdComponent(int id2) {
+		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 	
@@ -204,57 +207,45 @@ public abstract class ItemComponent
     {
     	sex = value;
     }
-    
-    public int getConnectionID1()
-	{
-		return connectionID1;
-	}
-    
-    public void setConnectionID1(int value) 
-    {
-    	connectionID1 = value;
-    }
-    
-    public int getConnectionID2()
-	{
-		return connectionID2;
-	}
-    
-    public void setConnectionID2(int value) 
-    {
-    	connectionID2 = value;
-    }
 	
-	public String displayInfo() 
+	public Object[] getItem()
 	{
 		switch (itemType)
 		{
 			case TITLE:
+<<<<<<< HEAD
 				return "" + id + " " + titleName + " " + titleType + " " + releaseYear
 						+ " " + runTime + " " + grade + " " + original;
+=======
+				return new Object[] { id, titleName, titleType, releaseYear,
+					runTime, grade, original };
+>>>>>>> refs/remotes/hnyberg/master
 			case ACTOR:
-				return "" + id + " " + firstName + " " + lastName + " " + sex + " " + birthYear;
+				return new Object[] { id, firstName, lastName, sex, birthYear };
 			case DIRECTOR:
-				return "" + id + " " + firstName + " " + lastName + " " + birthYear;
+				return new Object[] { id, firstName, lastName, birthYear };
 			case WRITER:
-				return "" + id + " " + firstName + " " + lastName + " " + birthYear;
+				return new Object[] { id, firstName, lastName, birthYear };
 			case GENRE:
-				return "" + id + " " + name;
+				return new Object[] { id, name };
 			case GENRE_CONNECTION:
-				return "" + id + " " + connectionID1 + " " + connectionID2;
+				return new Object[] { titleName, name };
 			case DIRECTOR_ROLE:
-				return "" + id + " " + connectionID1 + " " + connectionID2;
+				return new Object[] { firstName, lastName, titleName };
 			case WRITER_ROLE:
-				return "" + id + " " + connectionID1 + " " + connectionID2;
+				return new Object[] { firstName, lastName, titleName };
 			case ACTOR_ROLE:
-				return "" + id + " " + name + " " + connectionID1 + " " + connectionID2;
+				return new Object[] { firstName, lastName, name, titleName };
+			case UNDEFINED:
+				return new Object[] { titleName, titleType, name };
 			default:
 				return null;
 		}
 	}
 	
-	public Object[] getItem()
+	public String getGroupName() 
 	{
+<<<<<<< HEAD
 		switch (itemType)
 		{
 			case TITLE:
@@ -279,6 +270,9 @@ public abstract class ItemComponent
 			default:
 				return null;
 		}
+=======
+		throw new UnsupportedOperationException();
+>>>>>>> refs/remotes/hnyberg/master
 	}
 	
 	public enum ItemType

@@ -3,22 +3,13 @@ import java.util.Iterator;
 
 public class ItemGroup extends ItemComponent {
 
-	ArrayList itemComponents = new ArrayList();
+	ArrayList<ItemComponent> itemComponents = new ArrayList<ItemComponent>();
 
 	String groupName;
-	//ItemType groupType;
 
 	public ItemGroup(String newGroupName, int newGroupType) {
 		groupName = newGroupName;
 		setItemType(newGroupType);
-	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public int getGroupType() {
-		return getItemType();
 	}
 
 	public void add(ItemComponent newItemComponent) {
@@ -38,12 +29,17 @@ public class ItemGroup extends ItemComponent {
 
 	}
 
+	public String getGroupName() {
+		return groupName;
+	}
+	
 	public ItemComponent getComponent(int componentIndex) {
 
 		return (ItemComponent) itemComponents.get(componentIndex);
 
 	}
 	
+<<<<<<< HEAD
 	public Object[][] getTable()
 	{
 		if(itemComponents.size() > 0)
@@ -66,26 +62,46 @@ public class ItemGroup extends ItemComponent {
 		}
 		else
 			return null;
-	}
-
-	public String displayInfo() 
-	{		
+=======
+	public ItemComponent getByIdComponent(int id) {
 		
-		System.out.println(getGroupName() + " " + getGroupType() + "\n");
-
-		// Cycles through and prints any Movie or MovieGroups added
-		// to this MovieGroups ArrayList movieComponents
-		Iterator itemIterator = itemComponents.iterator();
-
+		Iterator<ItemComponent> itemIterator = itemComponents.iterator();
+		
 		while (itemIterator.hasNext()) {
 
 			ItemComponent itemInfo = (ItemComponent) itemIterator.next();
-
-			System.out.println(itemInfo.displayInfo());
+			
+			if(itemInfo.getID() == id)
+				return itemInfo;
 
 		}
 		
-		return "done";
-
+		return null;
+>>>>>>> refs/remotes/hnyberg/master
 	}
+	
+	public Object[][] getTable()
+	{
+		if(itemComponents.size() > 0)
+		{
+			Object[][] data = new Object[itemComponents.size()][getComponent(0).getItem().length];
+			
+			Iterator<ItemComponent> itemIterator = itemComponents.iterator();
+			
+			int i = 0;
+			
+			while (itemIterator.hasNext()) {
+		
+				ItemComponent itemInfo = (ItemComponent) itemIterator.next();
+				
+				data[i] = itemInfo.getItem();
+				
+				i++;
+			}
+			return data;
+		}
+		else
+			return null;
+	}
+
 }

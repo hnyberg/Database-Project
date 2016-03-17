@@ -3,10 +3,7 @@ public class Item extends ItemComponent
 {
 	
 	
-	public Item() 
-	{
-		
-	}
+	public Item() {	}
 	
 	public Item(int newItemType, int id, String fName, String lName, String sex, int year)
 	{
@@ -46,21 +43,37 @@ public class Item extends ItemComponent
 		this.setName(name);
 	}
 	
-	public Item(int newItemType, int id, int id1, int id2)
+	public Item(int newItemType, String fName, String lName, String name, String title)
 	{
 		this.setItemType(newItemType);
-		this.setId(id);
-		this.setConnectionID1(id1);
-		this.setConnectionID2(id2);
+		this.setName(name);
+		this.setTitleName(title);
+		this.setFirstName(fName);
+		this.setLastName(lName);
 	}
 	
-	public Item(int newItemType, int id, String name, int id1, int id2)
+	public Item(int newItemType, String fName, String lName, String title)
 	{
 		this.setItemType(newItemType);
-		this.setId(id);
+		this.setTitleName(title);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+	}
+	
+	public Item(int newItemType, String name, String title)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
 		this.setName(name);
-		this.setConnectionID1(id1);
-		this.setConnectionID2(id2);
+	}
+	
+	public Item(int newItemType, String title, String type, String year, int id)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
+		this.setTitleType(type);
+		this.setName(year);
+		this.setId(id);
 	}
 	
 	public Item(int newItemType, String fName, String lName, String name, String title)
