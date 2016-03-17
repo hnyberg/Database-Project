@@ -1,8 +1,6 @@
 
 public class Item extends ItemComponent
 {
-	
-	
 	public Item() {	}
 	
 	public Item(int newItemType, int id, String fName, String lName, String sex, int year)
@@ -75,7 +73,6 @@ public class Item extends ItemComponent
 		this.setName(year);
 		this.setId(id);
 	}
-	
 }
 
 

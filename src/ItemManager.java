@@ -19,7 +19,6 @@ public class ItemManager
 	private String[] itemType = {"titles", "actors", "directors", "writers", "genre", 
 			"genreconnections", "actorroles", "directorroles", "writerroles", "search"};
 
-	
 	private ItemComponent everyTable = new ItemGroup("Every Table", 0);
 	private ItemComponent titles = new ItemGroup("titles", 1);
 	private ItemComponent actors = new ItemGroup("actors", 2);
@@ -56,6 +55,11 @@ public class ItemManager
 		updateTable("writerroles");
 	}
 	
+	/**
+	 * Get table
+	 * @param table
+	 * @return
+	 */
 	public Object[][] getTable(String table)
 	{
 		for(int i = 0; i < itemType.length; i++)
@@ -66,6 +70,12 @@ public class ItemManager
 		return null;
 	}
 	
+	/**
+	 * Get Item from Table
+	 * @param id
+	 * @param tableIndex
+	 * @return
+	 */
 	public ItemComponent getItemComponent(int id, int tableIndex)
 	{
 		switch (tableIndex)
@@ -85,40 +95,39 @@ public class ItemManager
 		}
 	}
 	
+	/**
+	 * Get table from SQL
+	 * @param table
+	 */
 	public void updateTable(String table)
 	{
-		
+		// Change SQL Query depending on Table
 		String sql = "SELECT * FROM " + table;
 		
 		if(table == itemType[6])
 		{
 			sql = "SELECT a.firstName, a.lastName, r.name, t.name AS title " +
-					"FROM actorRoles r " +
-					"JOIN actors a ON r.actorID = a.id " +
+					"FROM actorRoles r JOIN actors a ON r.actorID = a.id " +
 					"JOIN titles t ON r.titleID = t.id";
 		}
 		else if(table == itemType[7])
 		{
 			sql = "SELECT d.firstName, d.lastName, t.name AS title " +
-					"FROM directorRoles r " +
-					"JOIN directors d ON r.directorID = d.id " +
+					"FROM directorRoles r JOIN directors d ON r.directorID = d.id " +
 					"JOIN titles t ON r.titleID = t.id";
 		}
 		else if(table == itemType[8])
 		{
-			sql = "SELECT w.firstName, w.lastName, t.name AS title " +
-					"FROM writerRoles r " +
-					"JOIN writers w ON r.writerID = w.id " +
-					"JOIN titles t ON r.titleID = t.id";
+			sql = "SELECT w.firstName, w.lastName, t.name AS title FROM writerRoles r " +
+					"JOIN writers w ON r.writerID = w.id JOIN titles t ON r.titleID = t.id";
 		}
 		else if(table == itemType[5])
 		{
-			sql = "SELECT t.name AS title, g.name " +
-					"FROM genreconnections c " +
-					"JOIN genre g ON c.genreID = g.id " +
-					"JOIN titles t ON c.titleID = t.id";
+			sql = "SELECT t.name AS title, g.name FROM genreconnections c " +
+					"JOIN genre g ON c.genreID = g.id JOIN titles t ON c.titleID = t.id";
 		}
 		
+		// Clear table and try SQL query
 		clearTable(table);
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -126,6 +135,7 @@ public class ItemManager
 				ResultSet rs = stmt.executeQuery(sql);
 			) 
 		{	
+			// Loop Through SQL items and add components depending on table
 			while(rs.next())
 			{
 				if(titles.getGroupName() == table)
@@ -181,6 +191,10 @@ public class ItemManager
 		}
 	}
 	
+	/**
+	 * Get Table and clear it.
+	 * @param table
+	 */
 	public void clearTable(String table)
 	{
 		for(int i = 0; i < itemType.length; i++)
@@ -190,10 +204,15 @@ public class ItemManager
 		}
 	}
 	
+	/**
+	 * Insert Item into SQL.
+	 * @param item
+	 * @return boolean
+	 * @throws Exception
+	 */
 	public boolean insertItem(ItemComponent item) throws Exception
 	{
-		
-		
+		// Create SQL Query depending on Table
 		String colum = "";
 		String values = "NULL";
 		for(int i = 0; i < colums[item.getItemType() - 1].length; i++)
@@ -209,7 +228,6 @@ public class ItemManager
 				values += ", ";
 			}
 		}
-		
 		String sql = "INSERT INTO " + itemType[item.getItemType() - 1] + "(" + colum  + ") " +
 				"VALUES (" + values + ")";
 		
@@ -217,9 +235,9 @@ public class ItemManager
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 				PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-				
 			) 
 		{	
+			// Insert info depending on Table
 			for(int i = 1; i < item.getItem().length; i++)
 			{
 				if(item.getItem()[i].getClass().equals(Integer.class))
@@ -242,9 +260,10 @@ public class ItemManager
 			
 			int affected = stmt.executeUpdate();
 			
-			if (affected == 1) {
-			} 
-			else {
+			// Update Table when done
+			if (affected == 1){
+				updateTable(itemType[item.getItemType() - 1]);
+			} else {
 				return false;
 			}
 		}
@@ -256,16 +275,22 @@ public class ItemManager
 		{
 			if (keys != null) keys.close();
 		}
-		updateTable(itemType[item.getItemType() - 1]);
+		
 		return true;
 	}
 	
-	public boolean updateItem(ItemComponent item) throws Exception {
-		
+	/**
+	 * Update SQL row
+	 * @param item
+	 * @return boolean
+	 * @throws Exception
+	 */
+	public boolean updateItem(ItemComponent item) throws Exception 
+	{
+		// Create SQL Query depending on Table
 		String colum = "";
 		for(int i = 1; i < colums[item.getItemType() - 1].length; i++)
 		{
-				
 			colum += colums[item.getItemType() - 1][i];
 			
 			if(i != colums[item.getItemType() - 1].length - 1)
@@ -273,17 +298,16 @@ public class ItemManager
 				colum += " = ?, ";
 			}
 		}
-		
 		colum += " = ? WHERE id = ?";
 		
-		String sql =
-				"UPDATE " + itemType[item.getItemType() - 1] + " SET " + colum;
+		String sql = "UPDATE " + itemType[item.getItemType() - 1] + " SET " + colum;
+		
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 				PreparedStatement stmt = conn.prepareStatement(sql);
 			)
 		{
-			
+			// Update info depending on Table
 			for(int i = 1; i < item.getItem().length; i++)
 			{
 				if(item.getItem()[i].getClass().equals(Integer.class))
@@ -303,11 +327,11 @@ public class ItemManager
 					stmt.setBoolean(i, (Boolean) item.getItem()[i]);
 				}
 			}
-			
 			stmt.setInt(item.getItem().length, item.getID());
 			
 			int affected = stmt.executeUpdate();
 			
+			// Update Table when done
 			if (affected == 1) {
 				updateTable(itemType[item.getItemType() - 1]);
 				return true;
@@ -323,21 +347,29 @@ public class ItemManager
 
 	}
 	
+	/**
+	 * Remove SQL row
+	 * @param item
+	 * @return boolean
+	 * @throws Exception
+	 */
 	public boolean removeItem(ItemComponent item) throws Exception {
-
-		String sql =
-				"DELETE FROM " + itemType[item.getItemType() - 1] + " WHERE " +
+		
+		// Create SQL query depending on Table
+		String sql = "DELETE FROM " + itemType[item.getItemType() - 1] + " WHERE " +
 						itemType[item.getItemType() - 1] + ".id = ?";
+		
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 				PreparedStatement stmt = conn.prepareStatement(sql);
 			)
 		{
-			
+			// Get row from ID and delete
 			stmt.setInt(1, item.getID());
 			
 			int affected = stmt.executeUpdate();
 			
+			// Update Table when done
 			if (affected == 1) {
 				updateTable(itemType[item.getItemType() - 1]);
 				return true;
@@ -353,29 +385,40 @@ public class ItemManager
 
 	}
 	
+	/**
+	 * Get search word and search SQL
+	 * @param sWord
+	 */
 	public void searchTables(String sWord)
 	{
-		
+		// SQL Query Strings
 		String sql[] = {"SELECT titles.name, titles.type, titles.year FROM titles WHERE titles.name  LIKE '%"
 					+ sWord + "%' OR titles.type LIKE '%" + sWord + "%' OR titles.year LIKE '%" + sWord + "%'",
 					
 					"SELECT actors.firstName, actors.lastName FROM actors WHERE actors.firstName" +
 					" LIKE '%" + sWord + "%' OR actors.lastName LIKE '%" + sWord + "%'",
 					
-					"SELECT directors.firstName, directors.lastName FROM directors WHERE " + 
-					"directors.firstName LIKE '%" + sWord + "%' OR directors.lastName LIKE '%" + sWord + "%'",
-					
-					"SELECT writers.firstName, writers.lastName FROM writers WHERE writers.firstName " +
-					"LIKE '%" + sWord + "%' OR writers.lastName LIKE '%" + sWord + "%'",
+					"SELECT d.firstName, d.lastName FROM directorroles r JOIN directors d ON r.directorID = d.id" +
+					" JOIN titles ON r.titleID = titles.id WHERE d.firstname LIKE '%" + sWord + "%' OR titles.name "
+							+ "LIKE '%" + sWord + "%' OR d.lastname LIKE '%" + sWord + "%'",
+							
+					"SELECT w.firstName, w.lastName FROM writerroles r JOIN writers w ON r.writerID = w.id" +
+					" JOIN titles ON r.titleID = titles.id WHERE w.firstname LIKE '%" + sWord + "%' OR w.lastname "
+							+ "LIKE '%" + sWord + "%' OR titles.name LIKE '%" + sWord + "%'",
 					
 					"SELECT genre.name, titles.name AS tname, titles.type FROM genreConnections g JOIN genre ON g.genreID" 
 					+ " = genre.id JOIN titles ON g.titleID = titles.id WHERE genre.name LIKE '%" + sWord + "%'",
 					
 					"SELECT a.name, titles.name AS tname, actors.id FROM actorroles a JOIN actors ON a.actorID = actors.id" +
-					" JOIN titles ON a.titleID = titles.id WHERE a.name LIKE '%" + sWord + "%'"
+					" JOIN titles ON a.titleID = titles.id WHERE a.name LIKE '%" + sWord + "%' OR titles.name LIKE '%" + sWord + "%'"
 					};
 		
+		// Clear Old Table
 		clearTable("search");
+		// VARIBLES
+		String thirdString = "";
+		
+		// Loop trough Searches
 		for(int i = 0; i < sql.length; i++)
 		{
 			try (
@@ -384,34 +427,19 @@ public class ItemManager
 					ResultSet rs = stmt.executeQuery(sql[i]);
 				) 
 			{	
+				// Get and save rows from search
 				while(rs.next())
 				{
-					switch(i)
-					{
-						case 0:
-							searchTable.add(new Item(0, rs.getString("name"), rs.getString("type"), rs.getString("year"), i));
-							break;
-						case 1:
-							searchTable.add(new Item(0, rs.getString("firstName"), rs.getString("lastName"), "Actor", i));
-							break;
-						case 2:
-							searchTable.add(new Item(0, rs.getString("firstName"), rs.getString("lastName"), "Director", i));
-							break;
-						case 3:
-							searchTable.add(new Item(0, rs.getString("firstName"), rs.getString("lastName"), "Writer", i));
-							break;
-						case 4:
-							searchTable.add(new Item(0, rs.getString("name"), rs.getString("tname"), rs.getString("type"), i));
-							break;
-						case 5:
-							searchTable.add(new Item(0, rs.getString("name"), rs.getString("tname"), 
-									actors.getComponent(rs.getInt("id") - 1).getFirstName() + " " +
-									actors.getComponent(rs.getInt("id") - 1).getLastName(), i));
-							break;
-						default:
-							searchTable.add(new Item(0, rs.getString("firstName"), rs.getString("lastName"), " ", i));
-							break;
-					}
+					thirdString = itemType[i].substring(0, 1).toUpperCase() + itemType[i].substring(1, itemType[i].length() - 1);;
+					
+					if(i == 0 || i == 4)
+						thirdString = rs.getObject(3).toString();
+					else if(i == 5)
+						thirdString = actors.getByIdComponent(rs.getInt("id")).getFirstName() + " " +
+								actors.getByIdComponent(rs.getInt("id")).getLastName();
+					
+					searchTable.add(new Item(0, rs.getObject(1).toString(), rs.getObject(2).toString(), 
+							thirdString, i));
 				}
 			}
 			catch (SQLException e) 
@@ -420,6 +448,11 @@ public class ItemManager
 				System.err.println("Error code: " + e.getErrorCode());
 				System.err.println("SQL state: " + e.getSQLState());
 			}
+		}
+		if(searchTable.getTable() == null)
+		{
+			searchTable.add(new Item(0, "No Result Found", "", 
+					"", 0));
 		}
 	}
 }

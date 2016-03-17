@@ -30,6 +30,11 @@ public abstract class ItemComponent
 		throw new UnsupportedOperationException();
 	}
 	
+	public String getGroupName() 
+	{
+		throw new UnsupportedOperationException();
+	}
+	
 	public Object[][] getTable()
 	{
 		throw new UnsupportedOperationException();
@@ -40,15 +45,14 @@ public abstract class ItemComponent
 		throw new UnsupportedOperationException();
 	}
 
-	public ItemComponent getByIdComponent(int id2) {
-		// TODO Auto-generated method stub
+	public ItemComponent getByIdComponent(int id2) 
+	{
 		throw new UnsupportedOperationException();
 	}
 	
 	public int getItemType()
 	{
 		return itemType.type;
-		//return itemType;
 	}
 	
 	public void setItemType(int value) 
@@ -236,11 +240,6 @@ public abstract class ItemComponent
 			default:
 				return null;
 		}
-	}
-	
-	public String getGroupName() 
-	{
-		throw new UnsupportedOperationException();
 	}
 	
 	public enum ItemType

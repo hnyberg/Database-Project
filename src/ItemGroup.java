@@ -12,46 +12,42 @@ public class ItemGroup extends ItemComponent {
 		setItemType(newGroupType);
 	}
 
-	public void add(ItemComponent newItemComponent) {
-
+	public void add(ItemComponent newItemComponent) 
+	{
 		itemComponents.add(newItemComponent);
 	}
 
-	public void remove(ItemComponent newItemComponent) {
-
+	public void remove(ItemComponent newItemComponent) 
+	{
 		itemComponents.remove(newItemComponent);
-
 	}
 	
-	public void clear() {
-
+	public void clear() 
+	{
 		itemComponents.clear();
-
 	}
 
-	public String getGroupName() {
+	public String getGroupName() 
+	{
 		return groupName;
 	}
 	
-	public ItemComponent getComponent(int componentIndex) {
-
+	public ItemComponent getComponent(int componentIndex) 
+	{
 		return (ItemComponent) itemComponents.get(componentIndex);
-
 	}
 	
-	public ItemComponent getByIdComponent(int id) {
-		
+	public ItemComponent getByIdComponent(int id) 
+	{
 		Iterator<ItemComponent> itemIterator = itemComponents.iterator();
 		
-		while (itemIterator.hasNext()) {
-
+		while (itemIterator.hasNext()) 
+		{
 			ItemComponent itemInfo = (ItemComponent) itemIterator.next();
 			
 			if(itemInfo.getID() == id)
 				return itemInfo;
-
 		}
-		
 		return null;
 	}
 	
@@ -65,8 +61,8 @@ public class ItemGroup extends ItemComponent {
 			
 			int i = 0;
 			
-			while (itemIterator.hasNext()) {
-		
+			while (itemIterator.hasNext()) 
+			{
 				ItemComponent itemInfo = (ItemComponent) itemIterator.next();
 				
 				data[i] = itemInfo.getItem();
