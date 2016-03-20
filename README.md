@@ -11,6 +11,9 @@ Project Description:
 -Make a Java-GUI to interact with database.  
 -JDBC for communication with app and database.  
 -Think MVC.  
+-In GUI, include tools to create, read, update and delete data (CRUD) from database.  
+-Include data selection possibilities (i.e. filtering or sorting).
+-A search function.
 -Co-op with your fellow students through Github.  
 -Pair programming as much as possible.  
 -Deadline: 1 week.  
