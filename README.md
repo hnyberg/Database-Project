@@ -26,9 +26,9 @@ Database requirements:
 
 Suggestions (from colleagues) for improvment:
 
--Separate words in search query. 
-  Problem: Possible duplicates in results. 
-  Solution 1: Loop through results to remove duplicates. 
+-Separate words in search query.  
+  Problem: Possible duplicates in results.  
+  Solution 1: Loop through results to remove duplicates.  
   Solution 2: Let the user separate search query words with commas. 
 Time: 0.5 h 
   
@@ -41,7 +41,7 @@ Time: 1 h
 Time: 1 h 
 
 -Change layout to border. 
-Time: 0.5h
+Time: 0.5h  
 
 -Add possibility to add connections. Preferably use drop-down 
 menus for user to choose from titles, actors etc. 
