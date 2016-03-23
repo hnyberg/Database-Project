@@ -391,7 +391,7 @@ public class View  extends JFrame{
 		String[] actorColumnNames = {"ID","First Name", "Last Name", "Sex", "Year"};
 		String[] writerColumnNames = {"ID","First Name", "Last Name", "Year"};
 		String[] directorColumnNames = {"ID","First Name", "Last Name", "Year"};
-		String[] genreConnectionColumnNames = {"Genre", "Title"};
+		String[] genreConnectionColumnNames = {"Title", "Genre"};
 		String[] actorRoleColumnNames = {"First Name", "Last Name", "Role", "Title"};
 		String[] writerRoleColumnNames = {"First Name", "Last Name", "Title"};
 		String[] directorRoleColumnNames = {"First Name", "Last Name", "Title"};
@@ -439,6 +439,23 @@ public class View  extends JFrame{
 		listPanel.validate();
 	}
 	
+	public void clearFields()
+	{
+		// Clear Fields
+		for (int i = 0; i < titleFields.size(); i++){
+			titleFields.get(i).setText("");
+		}
+		for (int i = 0; i < actorFields.size(); i++){
+			actorFields.get(i).setText("");
+		}
+		for (int i = 0; i < writerFields.size(); i++){
+			writerFields.get(i).setText("");
+		}
+		for (int i = 0; i < directorFields.size(); i++){
+			directorFields.get(i).setText("");
+		}
+	}
+	
 	public static void music(){
 		AudioPlayer player = AudioPlayer.player;
 		AudioStream music;
@@ -477,6 +494,8 @@ public class View  extends JFrame{
 					
 					// CHANGE TAB AND SET VISIBLE
 					activeTab = i;
+					
+					clearFields();
 					if(i < 5 && i != 1)
 					{
 						insertPanels.get(activeTab).setVisible(true);
@@ -502,6 +521,7 @@ public class View  extends JFrame{
 					listPanel.removeAll();
 					listPanel.add(searchPane);
 					listPanel.validate();
+					itemManager.clearTable("search");
 					break;
 				// Remove SQL Item From ID then Update Table
 				case 1:
@@ -561,28 +581,12 @@ public class View  extends JFrame{
 			}
 		}
 		
-		public void clearFields()
-		{
-			// Clear Fields
-			for (int i = 0; i < titleFields.size(); i++){
-				titleFields.get(i).setText("");
-			}
-			for (int i = 0; i < actorFields.size(); i++){
-				actorFields.get(i).setText("");
-			}
-			for (int i = 0; i < writerFields.size(); i++){
-				writerFields.get(i).setText("");
-			}
-			for (int i = 0; i < directorFields.size(); i++){
-				directorFields.get(i).setText("");
-			}
-		}
-		
 		public void actionPerformed(ActionEvent e)
 		{
 			// Variables
 			ItemComponent insertItem = new ItemGroup("Insert", 0);
-			ItemComponent item = null;
+			ItemComponent item = new Item();
+			Object[] newItem;
 			int id = 0;
 			boolean idOK = true;
 			
@@ -608,21 +612,36 @@ public class View  extends JFrame{
 					switch (activeTab)
 					{	
 						case 0:
-							insertItem.add(new Item(1, 0, titleFields.get(0).getText(), titleFields.get(1).getText(),
-								Integer.parseInt(titleFields.get(2).getText()), Integer.parseInt(titleFields.get(3).getText()),
-								Float.parseFloat(titleFields.get(4).getText()), Integer.parseInt(titleFields.get(5).getText())));
+							newItem = new Object[titleFields.size()];
+							for(int i = 0; i < titleFields.size(); i++)
+							{
+								newItem[i] = titleFields.get(i).getText();
+							}
+							insertItem.add(new Item(1, newItem));
 							break;
 						case 2:
-							insertItem.add(new Item(2, 0, actorFields.get(0).getText(), actorFields.get(1).getText(),
-								actorFields.get(2).getText(), Integer.parseInt(actorFields.get(3).getText())));
+							newItem = new Object[actorFields.size()];
+							for(int i = 0; i < actorFields.size(); i++)
+							{
+								newItem[i] = actorFields.get(i).getText();
+							}
+							insertItem.add(new Item(2, newItem));
 							break;
 						case 3:
-							insertItem.add(new Item(4, 0, writerFields.get(0).getText(), writerFields.get(1).getText(),
-								Integer.parseInt(writerFields.get(2).getText())));
+							newItem = new Object[writerFields.size()];
+							for(int i = 0; i < writerFields.size(); i++)
+							{
+								newItem[i] = writerFields.get(i).getText();
+							}
+							insertItem.add(new Item(4, newItem));
 							break;
 						case 4:
-							insertItem.add(new Item(3, 0, directorFields.get(0).getText(), directorFields.get(1).getText(),
-								Integer.parseInt(directorFields.get(2).getText())));
+							newItem = new Object[directorFields.size()];
+							for(int i = 0; i < directorFields.size(); i++)
+							{
+								newItem[i] = directorFields.get(i).getText();
+							}
+							insertItem.add(new Item(3, newItem));
 							break;
 						default:
 							break;
@@ -679,36 +698,38 @@ public class View  extends JFrame{
 						// Check if Data in Fields
 						if (notEmpty(activeTab))
 						{
+							newItem = item.getItem();
 							// Put New Data In Item depending on Table
 							switch (activeTab)
 							{
 								case 0:
-									item.setTitleName(titleFields.get(0).getText());
-									item.setTitleType(titleFields.get(1).getText());
-									item.setReleaseYear(Integer.parseInt(titleFields.get(2).getText()));
-									item.setRunTime(Integer.parseInt(titleFields.get(3).getText()));
-									item.setGrade(Float.parseFloat(titleFields.get(4).getText()));
-									item.setOriginal(Integer.parseInt(titleFields.get(5).getText()));
+									for(int i = 0; i < titleFields.size(); i++)
+									{
+										newItem[i + 1] = titleFields.get(i).getText();
+									}
 									break;
 								case 2:
-									item.setFirstName(actorFields.get(0).getText());
-									item.setLastName(actorFields.get(1).getText());
-									item.setSex(actorFields.get(2).getText());
-									item.setBirthYear(Integer.parseInt(actorFields.get(3).getText()));
+									for(int i = 0; i < actorFields.size(); i++)
+									{
+										newItem[i + 1] = actorFields.get(i).getText();
+									}
 									break;
 								case 3:
-									item.setFirstName(writerFields.get(0).getText());
-									item.setLastName(writerFields.get(1).getText());
-									item.setBirthYear(Integer.parseInt(writerFields.get(2).getText()));
+									for(int i = 0; i < writerFields.size(); i++)
+									{
+										newItem[i + 1] = writerFields.get(i).getText();
+									}
 									break;
 								case 4:
-									item.setFirstName(directorFields.get(0).getText());
-									item.setLastName(directorFields.get(1).getText());
-									item.setBirthYear(Integer.parseInt(directorFields.get(2).getText()));
+									for(int i = 0; i < directorFields.size(); i++)
+									{
+										newItem[i + 1] = directorFields.get(i).getText();
+									}
 									break;
 								default:
 									break;
 							}
+							item.setItem(newItem);
 							try {
 								// Send changes to SQL and Update Table
 								itemManager.updateItem(item);
