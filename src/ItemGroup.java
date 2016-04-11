@@ -9,7 +9,7 @@ public class ItemGroup extends ItemComponent {
 
 	public ItemGroup(String newGroupName, int newGroupType) {
 		groupName = newGroupName;
-		setItemType(newGroupType);
+		this.itemType.setType(newGroupType);
 	}
 
 	public void add(ItemComponent newItemComponent) 
