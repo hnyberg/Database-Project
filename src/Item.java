@@ -1,51 +1,78 @@
 
 public class Item extends ItemComponent
 {
-	Object[] item;
-	int id = 0;
-	
 	public Item() {	}
 	
-	public Item(int newItemType, Object[] item) 
+	public Item(int newItemType, int id, String fName, String lName, String sex, int year)
 	{
-		this.itemType.setType(newItemType);
-		this.item = item;
-		
-		if(item[0].getClass().equals(Integer.class))
-		{
-			this.id = (int) item[0];
-		}
+		this.setItemType(newItemType);
+		this.setId(id);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+		this.setSex(sex);
+		this.setBirthYear(year);
 	}
 	
-	public int getID()
+	public Item(int newItemType, int id, String fName, String lName, int year)
 	{
-		return id;	                 
-	}
-
-	public void setId(int value)
-    {
-		id = value;
-    }
-	
-    public void setItem(Object[] item)
-    {
-    	this.item = item;
-    }
-	
-	public Object[] getItem()
-	{	
-		return item;
+		this.setItemType(newItemType);
+		this.setId(id);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+		this.setBirthYear(year);
 	}
 	
-	public int getItemType()
+	public Item(int newItemType, int id, String name, String type, int year, int time, float grade, int original)
 	{
-		return itemType.getType();
+		this.setItemType(newItemType);
+		this.setId(id);
+		this.setTitleName(name);
+		this.setTitleType(type);
+		this.setReleaseYear(year);
+		this.setRunTime(time);
+		this.setGrade(grade);
+		this.setOriginal(original);
 	}
 	
-	public void setItemType(int value) 
-    {
-		itemType.setType(value);
-    }
+	public Item(int newItemType, int id, String name)
+	{
+		this.setItemType(newItemType);
+		this.setId(id);
+		this.setName(name);
+	}
+	
+	public Item(int newItemType, String fName, String lName, String name, String title)
+	{
+		this.setItemType(newItemType);
+		this.setName(name);
+		this.setTitleName(title);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+	}
+	
+	public Item(int newItemType, String fName, String lName, String title)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
+		this.setFirstName(fName);
+		this.setLastName(lName);
+	}
+	
+	public Item(int newItemType, String name, String title)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
+		this.setName(name);
+	}
+	
+	public Item(int newItemType, String title, String type, String year, int id)
+	{
+		this.setItemType(newItemType);
+		this.setTitleName(title);
+		this.setTitleType(type);
+		this.setName(year);
+		this.setId(id);
+	}
 }
 
 

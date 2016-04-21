@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -19,12 +17,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import sun.audio.AudioData;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-import sun.audio.ContinuousAudioDataStream;
-
-public class View  extends JFrame{
+public class View extends JFrame{
 
 	//	DIMENSION CONTSTANTS
 	private final int BIG_FONT_SIZE = 18;
@@ -33,19 +26,29 @@ public class View  extends JFrame{
 	private final int WINDOW_HEIGHT = 576;
 	private final int TOP_PANEL_HEIGHT = 90;
 	private final int BOTTOM_PANEL_HEIGHT = 70;
+	private final int LABEL_HEIGHT = 35;
 	private final int LIST_PANEL_HEIGHT = WINDOW_HEIGHT - TOP_PANEL_HEIGHT - BOTTOM_PANEL_HEIGHT;
 	
 	private final int WINDOW_WIDTH = 1024;
 	private final int LEFT_PANEL_WIDTH = 160;
 	private final int RIGHT_PANEL_WIDTH = 180;
+	private final int LABEL_WIDTH = 140;
 	private final int MID_PANEL_WIDTH = WINDOW_WIDTH - LEFT_PANEL_WIDTH - RIGHT_PANEL_WIDTH;
 	
-	private final int LABEL_WIDTH = 140;
-	private final int LABEL_HEIGHT = 35;
 	private final Dimension LABEL_DIMENSION = new Dimension(LABEL_WIDTH, LABEL_HEIGHT);
 	
 	//	VARIABLE FIELDS
 	int activeTab;
+	
+	private final String[] titleColumnNames = {"ID","Title", "Type", "Year", "Length", "Rating", "Netflix Original"};
+	private final String[] genreColumnNames = {"ID","Genre"};
+	private final String[] actorColumnNames = {"ID","First Name", "Last Name", "Sex", "Year"};
+	private final String[] writerColumnNames = {"ID","First Name", "Last Name", "Year"};
+	private final String[] directorColumnNames = {"ID","First Name", "Last Name", "Year"};
+	private final String[] genreConnectionColumnNames = {"Genre", "Title"};
+	private final String[] actorRoleColumnNames = {"First Name", "Last Name", "Role", "Title"};
+	private final String[] writerRoleColumnNames = {"First Name", "Last Name", "Title"};
+	private final String[] directorRoleColumnNames = {"First Name", "Last Name", "Title"};
 	
 	//	OBJECT FIELDS
 	private Font standardFont;
@@ -127,7 +130,6 @@ public class View  extends JFrame{
 		//	SET MAIN PANEL
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-		mainPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 		mainPanel.setBackground(BACKGROUND_COLOR);
 		add(mainPanel);
 		
@@ -241,7 +243,6 @@ public class View  extends JFrame{
 		rightPanel.add(new JLabel(" "));
 		
 		//	-> SET INSERT PANELS
-		
 		insertPanels = new Vector<JPanel>(1,1);
 		for (int i = 0; i <tabStrings.size(); i++){
 			insertPanels.add(new JPanel());
@@ -366,7 +367,7 @@ public class View  extends JFrame{
 			insertPanels.get(i).add(updateButtons.get(i));
 		}
 		
-		//	-> ADD ALL INSERT PANELS
+		//	-> ADD ALL INSERT PANELS (INVISIBLE FOR NOW)
 		for (int i = 0; i < insertPanels.size(); i++){
 			rightPanel.add(insertPanels.get(i));
 			insertPanels.get(i).setVisible(false);
@@ -378,25 +379,13 @@ public class View  extends JFrame{
 		insertPanels.get(activeTab).setVisible(true);
 		tabButtons.get(activeTab).setForeground(WHITE);
 		
-		//	SET VISIBLE
+		//	START GUI
 		setVisible(true);
-		music();
 	}
 	
 	private void updateTables(){
 		
-		//	PREPARE TABLE COLUMNS
-		String[] titleColumnNames = {"ID","Title", "Type", "Year", "Length", "Rating", "Netflix Original"};
-		String[] genreColumnNames = {"ID","Genre"};
-		String[] actorColumnNames = {"ID","First Name", "Last Name", "Sex", "Year"};
-		String[] writerColumnNames = {"ID","First Name", "Last Name", "Year"};
-		String[] directorColumnNames = {"ID","First Name", "Last Name", "Year"};
-		String[] genreConnectionColumnNames = {"Title", "Genre"};
-		String[] actorRoleColumnNames = {"First Name", "Last Name", "Role", "Title"};
-		String[] writerRoleColumnNames = {"First Name", "Last Name", "Title"};
-		String[] directorRoleColumnNames = {"First Name", "Last Name", "Title"};
-		
-		//	SET ALL SCROLL PANES
+		//	SET NEW SCROLL PANES
 		scrollPanes = new Vector<JScrollPane>(1,1);
 		scrollPanes.add(new JScrollPane(new JTable(itemManager.getTable("titles"), titleColumnNames)));
 		scrollPanes.add(new JScrollPane(new JTable(itemManager.getTable("genre"), genreColumnNames)));
@@ -408,23 +397,24 @@ public class View  extends JFrame{
 		scrollPanes.add(new JScrollPane(new JTable(itemManager.getTable("writerroles"), writerRoleColumnNames)));
 		scrollPanes.add(new JScrollPane(new JTable(itemManager.getTable("directorroles"), directorRoleColumnNames)));
 		
-		//	ADJUST TITLE COLUMN WITHS
+		//	ADJUST COLUMN WITHS
+		//	->	TITLES
 		currentTable = (JTable)scrollPanes.get(0).getViewport().getView();
 		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
 		currentTable.getColumnModel().getColumn(1).setPreferredWidth(180);
-		
+		//	->	GENRES
 		currentTable = (JTable)scrollPanes.get(1).getViewport().getView();
 		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
-		
+		//	->	ACTORS
 		currentTable = (JTable)scrollPanes.get(2).getViewport().getView();
 		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
-		
+		//	->	WRITERS
 		currentTable = (JTable)scrollPanes.get(3).getViewport().getView();
 		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
-		
+		//	->	DIRECTORS
 		currentTable = (JTable)scrollPanes.get(4).getViewport().getView();
 		currentTable.getColumnModel().getColumn(0).setMaxWidth(30);
-		
+		//	->	ACTOR ROLES
 		currentTable = (JTable)scrollPanes.get(6).getViewport().getView();
 		currentTable.getColumnModel().getColumn(3).setPreferredWidth(150);
 		
@@ -433,7 +423,7 @@ public class View  extends JFrame{
 			currentTable.setAutoCreateRowSorter(true);
 		}
 		
-		//	RESET LIST PANEL
+		//	UPDATE LIST PANEL
 		listPanel.removeAll();
 		listPanel.add(scrollPanes.get(activeTab));
 		listPanel.validate();
@@ -456,46 +446,28 @@ public class View  extends JFrame{
 		}
 	}
 	
-	public static void music(){
-		AudioPlayer player = AudioPlayer.player;
-		AudioStream music;
-		AudioData data;
-		ContinuousAudioDataStream loop = null;
-		
-		try{
-			music = new AudioStream(new FileInputStream("Fox.mp3"));
-			data = music.getData();
-			loop = new ContinuousAudioDataStream(data);
-		}catch(IOException error){}
-		
-		player.start(loop);
-	}
-	
 	class TabListener implements ActionListener{
 		public void actionPerformed(ActionEvent e)
 		{
-			//	CLEAR MID AND RIGHT PANELS
+			//	CLEAR MID PANEL AND HIDE RIGHT PANELS
 			listPanel.removeAll();
-			
-			// HIDE PANELS
+			clearFields();
 			for (int i = 0; i < insertPanels.size(); i++){
 				insertPanels.get(i).setVisible(false);
 			}
 			
-			// LOOP THROUGH BUTTONS
+			// GREYOUT ALL TAB BUTTONS
 			for (int i = 0; i < tabButtons.size(); i++)
 			{
 				tabButtons.get(i).setForeground(GREY);
 				
-				// GET BUTTON CLICKED
+				// GET CLICKED BUTTON
 				if(tabButtons.get(i).equals((JButton)(e.getSource())))
 				{
-					tabButtons.get(i).setForeground(WHITE);
-					
-					// CHANGE TAB AND SET VISIBLE
+					// SET CLICKED TAB TO ACTIVE (AND VISIBLE)
 					activeTab = i;
-					
-					clearFields();
+					tabButtons.get(i).setForeground(WHITE);
+					//	ONLY CERTAIN INSERT PANELS SHOULD BE VISIBLE/AVAILABLE
 					if(i < 5 && i != 1)
 					{
 						insertPanels.get(activeTab).setVisible(true);
@@ -503,15 +475,13 @@ public class View  extends JFrame{
 				}
 			}
 			updateTables();
-			listPanel.validate();
-			rightPanel.validate();
 		}
 	}
 	
 	class BottomListener implements ActionListener{
 		public void actionPerformed(ActionEvent e)
 		{
-			// Search and Destroy buttons
+			// CHECK IF "SEARCH" OR "DELETE" BUTTON
 			switch (bottomButtons.indexOf((JButton)(e.getSource())))
 			{
 				// Search SQL with searchField text and create Table
@@ -521,7 +491,6 @@ public class View  extends JFrame{
 					listPanel.removeAll();
 					listPanel.add(searchPane);
 					listPanel.validate();
-					itemManager.clearTable("search");
 					break;
 				// Remove SQL Item From ID then Update Table
 				case 1:
@@ -580,13 +549,13 @@ public class View  extends JFrame{
 					return false;
 			}
 		}
+
 		
 		public void actionPerformed(ActionEvent e)
 		{
 			// Variables
 			ItemComponent insertItem = new ItemGroup("Insert", 0);
-			ItemComponent item = new Item();
-			Object[] newItem;
+			ItemComponent item = null;
 			int id = 0;
 			boolean idOK = true;
 			
@@ -612,36 +581,21 @@ public class View  extends JFrame{
 					switch (activeTab)
 					{	
 						case 0:
-							newItem = new Object[titleFields.size()];
-							for(int i = 0; i < titleFields.size(); i++)
-							{
-								newItem[i] = titleFields.get(i).getText();
-							}
-							insertItem.add(new Item(1, newItem));
+							insertItem.add(new Item(1, 0, titleFields.get(0).getText(), titleFields.get(1).getText(),
+								Integer.parseInt(titleFields.get(2).getText()), Integer.parseInt(titleFields.get(3).getText()),
+								Float.parseFloat(titleFields.get(4).getText()), Integer.parseInt(titleFields.get(5).getText())));
 							break;
 						case 2:
-							newItem = new Object[actorFields.size()];
-							for(int i = 0; i < actorFields.size(); i++)
-							{
-								newItem[i] = actorFields.get(i).getText();
-							}
-							insertItem.add(new Item(2, newItem));
+							insertItem.add(new Item(2, 0, actorFields.get(0).getText(), actorFields.get(1).getText(),
+								actorFields.get(2).getText(), Integer.parseInt(actorFields.get(3).getText())));
 							break;
 						case 3:
-							newItem = new Object[writerFields.size()];
-							for(int i = 0; i < writerFields.size(); i++)
-							{
-								newItem[i] = writerFields.get(i).getText();
-							}
-							insertItem.add(new Item(4, newItem));
+							insertItem.add(new Item(4, 0, writerFields.get(0).getText(), writerFields.get(1).getText(),
+								Integer.parseInt(writerFields.get(2).getText())));
 							break;
 						case 4:
-							newItem = new Object[directorFields.size()];
-							for(int i = 0; i < directorFields.size(); i++)
-							{
-								newItem[i] = directorFields.get(i).getText();
-							}
-							insertItem.add(new Item(3, newItem));
+							insertItem.add(new Item(3, 0, directorFields.get(0).getText(), directorFields.get(1).getText(),
+								Integer.parseInt(directorFields.get(2).getText())));
 							break;
 						default:
 							break;
@@ -693,43 +647,41 @@ public class View  extends JFrame{
 						}
 						// End Data Buttons
 						break;
-						// Start Update Buttons
+					// Start Update Buttons
 					case "UPDATE":
 						// Check if Data in Fields
 						if (notEmpty(activeTab))
 						{
-							newItem = item.getItem();
 							// Put New Data In Item depending on Table
 							switch (activeTab)
 							{
 								case 0:
-									for(int i = 0; i < titleFields.size(); i++)
-									{
-										newItem[i + 1] = titleFields.get(i).getText();
-									}
+									item.setTitleName(titleFields.get(0).getText());
+									item.setTitleType(titleFields.get(1).getText());
+									item.setReleaseYear(Integer.parseInt(titleFields.get(2).getText()));
+									item.setRunTime(Integer.parseInt(titleFields.get(3).getText()));
+									item.setGrade(Float.parseFloat(titleFields.get(4).getText()));
+									item.setOriginal(Integer.parseInt(titleFields.get(5).getText()));
 									break;
 								case 2:
-									for(int i = 0; i < actorFields.size(); i++)
-									{
-										newItem[i + 1] = actorFields.get(i).getText();
-									}
+									item.setFirstName(actorFields.get(0).getText());
+									item.setLastName(actorFields.get(1).getText());
+									item.setSex(actorFields.get(2).getText());
+									item.setBirthYear(Integer.parseInt(actorFields.get(3).getText()));
 									break;
 								case 3:
-									for(int i = 0; i < writerFields.size(); i++)
-									{
-										newItem[i + 1] = writerFields.get(i).getText();
-									}
+									item.setFirstName(writerFields.get(0).getText());
+									item.setLastName(writerFields.get(1).getText());
+									item.setBirthYear(Integer.parseInt(writerFields.get(2).getText()));
 									break;
 								case 4:
-									for(int i = 0; i < directorFields.size(); i++)
-									{
-										newItem[i + 1] = directorFields.get(i).getText();
-									}
+									item.setFirstName(directorFields.get(0).getText());
+									item.setLastName(directorFields.get(1).getText());
+									item.setBirthYear(Integer.parseInt(directorFields.get(2).getText()));
 									break;
 								default:
 									break;
 							}
-							item.setItem(newItem);
 							try {
 								// Send changes to SQL and Update Table
 								itemManager.updateItem(item);

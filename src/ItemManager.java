@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSetMetaData;
 
 
 public class ItemManager 
@@ -17,7 +16,6 @@ public class ItemManager
 			{"id", "firstName", "lastName", "sex", "year"}, {"id", "firstName", "lastName", "year"}, 
 			{"id", "firstName", "lastName", "year"}, {"id", "name"}, {"id", "titleID", "genreID" },
 			{"id", "name", "titleID", "actorID"}, {"id", "titleID", "directorID"}, {"id", "titleID", "writerID"}};
-	
 	private String[] itemType = {"titles", "actors", "directors", "writers", "genre", 
 			"genreconnections", "actorroles", "directorroles", "writerroles", "search"};
 
@@ -140,19 +138,48 @@ public class ItemManager
 			// Loop Through SQL items and add components depending on table
 			while(rs.next())
 			{
-				ResultSetMetaData rsmd = rs.getMetaData();
-				for(int i = 0; i < itemType.length; i++)
+				if(titles.getGroupName() == table)
 				{
-					if(everyTable.getComponent(i).getGroupName() == table)
-					{
-						Object[] item = new Object[rsmd.getColumnCount()];
-						
-						for(int e = 0; e < rsmd.getColumnCount(); e++)
-						{
-							item[e] = rs.getObject(e + 1);
-						}
-						everyTable.getComponent(i).add(new Item(i + 1, item));
-					}
+					titles.add(new Item(1, rs.getInt("id"), rs.getString("name"), rs.getString("type"),
+							rs.getInt("year"), rs.getInt("minutes"), rs.getFloat("grade"), rs.getInt("original")));
+				}
+				if(actors.getGroupName() == table)
+				{ 
+					actors.add(new Item(2, rs.getInt("id"), rs.getString("firstname"), rs.getString("lastname"),
+							rs.getString("sex"), rs.getInt("year")));
+				}
+				if(directors.getGroupName() == table)
+				{
+					directors.add(new Item(3, rs.getInt("id"), rs.getString("firstname"), rs.getString("lastname"),
+							rs.getInt("year")));
+				}
+				if(writers.getGroupName() == table)
+				{
+					writers.add(new Item(4, rs.getInt("id"), rs.getString("firstname"), rs.getString("lastname"),
+							rs.getInt("year")));
+				}
+				if(genre.getGroupName() == table)
+				{
+					genre.add(new Item(5, rs.getInt("id"), rs.getString("name")));
+				}
+				if(genreConnections.getGroupName() == table)
+				{
+					genreConnections.add(new Item(6, rs.getString("title"), rs.getString("name")));
+				}
+				if(actorRole.getGroupName() == table)
+				{
+					actorRole.add(new Item(7, rs.getString("firstName"), rs.getString("lastName"),
+							rs.getString("name"), rs.getString("title")));
+				}
+				if(directorRole.getGroupName() == table)
+				{
+					directorRole.add(new Item(8, rs.getString("firstName"), rs.getString("lastName"),
+							rs.getString("title")));
+				}
+				if(writerRole.getGroupName() == table)
+				{
+					writerRole.add(new Item(9, rs.getString("firstName"), rs.getString("lastName"),
+							rs.getString("title")));
 				}
 			}
 		}
@@ -204,8 +231,6 @@ public class ItemManager
 		String sql = "INSERT INTO " + itemType[item.getItemType() - 1] + "(" + colum  + ") " +
 				"VALUES (" + values + ")";
 		
-		
-		
 				ResultSet keys = null;
 		try (
 				Connection conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -213,28 +238,23 @@ public class ItemManager
 			) 
 		{	
 			// Insert info depending on Table
-			for(int i = 0; i < item.getItem().length; i++)
+			for(int i = 1; i < item.getItem().length; i++)
 			{
 				if(item.getItem()[i].getClass().equals(Integer.class))
 				{
-					stmt.setInt(i + 1, (int) item.getItem()[i]);
+					stmt.setInt(i, (int) item.getItem()[i]);
 				}
 				else if(item.getItem()[i].getClass().equals(String.class))
 				{
-					if(item.getItem()[i].equals("true"))
-						stmt.setInt(i + 1, 1);
-					else if(item.getItem()[i].equals("false"))
-						stmt.setInt(i + 1, 0);
-					else
-						stmt.setString(i + 1, (String) item.getItem()[i]);
+					stmt.setString(i, (String) item.getItem()[i]);
 				}
 				else if(item.getItem()[i].getClass().equals(Float.class))
 				{
-					stmt.setFloat(i + 1, (Float) item.getItem()[i]);
+					stmt.setFloat(i, (Float) item.getItem()[i]);
 				}
 				else if(item.getItem()[i].getClass().equals(Boolean.class))
 				{
-					stmt.setObject(i + 1, item.getItem()[i]);
+					stmt.setBoolean(i, (Boolean) item.getItem()[i]);
 				}
 			}
 			
@@ -296,12 +316,7 @@ public class ItemManager
 				}
 				else if(item.getItem()[i].getClass().equals(String.class))
 				{
-					if(item.getItem()[i].equals("true"))
-						stmt.setInt(i, 1);
-					else if(item.getItem()[i].equals("false"))
-						stmt.setInt(i, 0);
-					else
-						stmt.setString(i, (String) item.getItem()[i]);
+					stmt.setString(i, (String) item.getItem()[i]);
 				}
 				else if(item.getItem()[i].getClass().equals(Float.class))
 				{
@@ -376,7 +391,6 @@ public class ItemManager
 	 */
 	public void searchTables(String sWord)
 	{
-		Object[] item;
 		// SQL Query Strings
 		String sql[] = {"SELECT titles.name, titles.type, titles.year FROM titles WHERE titles.name  LIKE '%"
 					+ sWord + "%' OR titles.type LIKE '%" + sWord + "%' OR titles.year LIKE '%" + sWord + "%'",
@@ -421,12 +435,11 @@ public class ItemManager
 					if(i == 0 || i == 4)
 						thirdString = rs.getObject(3).toString();
 					else if(i == 5)
-						thirdString = actors.getByIdComponent(rs.getInt("id")).getItem()[1] + " " +
-								actors.getByIdComponent(rs.getInt("id")).getItem()[2];
+						thirdString = actors.getByIdComponent(rs.getInt("id")).getFirstName() + " " +
+								actors.getByIdComponent(rs.getInt("id")).getLastName();
 					
-					item  = new Object[] {rs.getObject(1).toString(), rs.getObject(2).toString(), thirdString};
-					
-					searchTable.add(new Item(0, item));
+					searchTable.add(new Item(0, rs.getObject(1).toString(), rs.getObject(2).toString(), 
+							thirdString, i));
 				}
 			}
 			catch (SQLException e) 
@@ -438,8 +451,8 @@ public class ItemManager
 		}
 		if(searchTable.getTable() == null)
 		{
-			item  = new Object[] { "No Result Found", "", "" };
-			searchTable.add(new Item(0, item));
+			searchTable.add(new Item(0, "No Result Found", "", 
+					"", 0));
 		}
 	}
 }
